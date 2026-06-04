@@ -38,7 +38,9 @@
   ];
 
   // ── State ─────────────────────────────────────────────────────────────────
-  var _active = false;
+  var _active    = false;
+  var _paused    = false; // own flag — synth.paused is unreliable in Chrome
+  var _cancelled = false; // suppress onend when cancel() is intentional
 
   // ── Button helpers ────────────────────────────────────────────────────────
   function _btn() { return document.getElementById('audioBtn'); }
@@ -68,6 +70,9 @@
       _setBtn('×', 'Аудио недоступно', null, ['playing', 'paused']);
       return;
     }
+
+    _paused    = false;
+    _cancelled = false;
     synth.cancel();
 
     var text = TEXTS[index];
@@ -87,7 +92,9 @@
     if (ruVoice) utter.voice = ruVoice;
 
     utter.onend = function () {
+      if (_cancelled) return; // screen change triggered cancel — don't reset state
       _active = false;
+      _paused = false;
       _setBtn('▶', 'Слушать снова', null, ['playing', 'paused']);
     };
 
@@ -113,18 +120,19 @@
       var currentScreen = (global.state && global.state.day != null) ? global.state.day : 0;
 
       if (!_active) {
+        // Start or replay
         _active = true;
         _speak(currentScreen);
         _setBtn('⏸', 'Пауза', 'playing', 'paused');
-      } else if (synth.speaking && !synth.paused) {
+      } else if (!_paused) {
+        // Pause — use own flag, not synth.paused (unreliable in Chrome)
         synth.pause();
+        _paused = true;
         _setBtn('▶', 'Продолжить', 'paused', 'playing');
-      } else if (synth.paused) {
-        synth.resume();
-        _setBtn('⏸', 'Пауза', 'playing', 'paused');
       } else {
-        // Narration ended — replay
-        _speak(currentScreen);
+        // Resume
+        synth.resume();
+        _paused = false;
         _setBtn('⏸', 'Пауза', 'playing', 'paused');
       }
     },
@@ -136,8 +144,14 @@
      */
     onScreenChange: function (index) {
       if (!_active) return;
+      _cancelled = true; // prevent onend from resetting _active
+      _paused    = false;
       global.speechSynthesis.cancel();
-      setTimeout(function () { _speak(index); }, 700);
+      setTimeout(function () {
+        _cancelled = false;
+        _speak(index);
+        _setBtn('⏸', 'Пауза', 'playing', 'paused');
+      }, 700);
     }
   };
 
