@@ -5,6 +5,7 @@
   var _paused = false;
   var _cancelled = false;
   var _voices = [];
+  var _keepAliveTimer = null;
 
   function _translations() {
     var lang = (global.state && global.state.lang) || 'ru';
@@ -70,12 +71,34 @@
     return _voices.find(function (voice) { return voice.lang.indexOf('ru') === 0; });
   }
 
+  // Chrome pauses speech synthesis when the tab is backgrounded (~15 s).
+  // Periodically nudging pause/resume keeps it alive.
+  function _startKeepAlive() {
+    _stopKeepAlive();
+    var synth = global.speechSynthesis;
+    if (!synth) return;
+    _keepAliveTimer = setInterval(function () {
+      if (synth.speaking && !synth.paused && !_paused) {
+        synth.pause();
+        synth.resume();
+      }
+    }, 10000);
+  }
+
+  function _stopKeepAlive() {
+    if (_keepAliveTimer) {
+      clearInterval(_keepAliveTimer);
+      _keepAliveTimer = null;
+    }
+  }
+
   function _speak(index) {
     var synth = global.speechSynthesis;
     var current = _translations();
     if (!synth || typeof global.SpeechSynthesisUtterance !== 'function' || !current) {
       _active = false;
       _paused = false;
+      _stopKeepAlive();
       _setBtn('×', _common().audioUnavailable, null, ['playing', 'paused']);
       return;
     }
@@ -83,7 +106,12 @@
     _paused = false;
     synth.cancel();
     var text = _audioTexts()[index];
-    if (!text) return;
+    if (!text) {
+      _active = false;
+      _stopKeepAlive();
+      _setBtn('▶', _common().audioStart, null, ['playing', 'paused']);
+      return;
+    }
 
     var utter = new SpeechSynthesisUtterance(text);
     utter.lang = current.meta.htmlLang === 'de' ? 'de-DE' : 'ru-RU';
@@ -94,8 +122,22 @@
     var voice = _voiceFor(utter.lang);
     if (voice) utter.voice = voice;
 
+    utter.onstart = function () {
+      _startKeepAlive();
+    };
+
     utter.onend = function () {
+      _stopKeepAlive();
       if (_cancelled) return;
+      _active = false;
+      _paused = false;
+      _setBtn('▶', _common().audioReplay, null, ['playing', 'paused']);
+    };
+
+    utter.onerror = function (event) {
+      _stopKeepAlive();
+      // 'interrupted' means we intentionally cancelled — don't reset state
+      if (event.error === 'interrupted' || event.error === 'canceled') return;
       _active = false;
       _paused = false;
       _setBtn('▶', _common().audioReplay, null, ['playing', 'paused']);
@@ -104,6 +146,8 @@
     _cancelled = false;
     setTimeout(function () {
       if (_cancelled) return;
+      // Chrome sometimes gets stuck in a paused state after cancel(); resume first.
+      if (synth.paused) synth.resume();
       synth.speak(utter);
     }, 50);
   }
@@ -135,10 +179,12 @@
       } else if (!_paused) {
         synth.pause();
         _paused = true;
+        _stopKeepAlive();
         _setBtn('▶', _common().audioResume, 'paused', 'playing');
       } else {
         synth.resume();
         _paused = false;
+        _startKeepAlive();
         _setBtn('⏸', _common().audioPause, 'playing', 'paused');
       }
     },
@@ -146,6 +192,7 @@
       if (!_active) return;
       _cancelled = true;
       _paused = false;
+      _stopKeepAlive();
       global.speechSynthesis.cancel();
       setTimeout(function () {
         _speak(index);
