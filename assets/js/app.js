@@ -8,6 +8,7 @@ const state = {
   scaleValue: 50,
   glossaryOpen: false
 };
+window.state = state;
 
 // ===== SCREENS =====
 const screens = [
