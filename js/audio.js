@@ -1,5 +1,5 @@
 /**
- * AudioQuest — narration + ambient audio module
+ * AudioQuest — narration module
  * Exposes window.AudioQuest with two public methods:
  *   AudioQuest.toggle()          — called by the UI button
  *   AudioQuest.onScreenChange(i) — called by renderScreen()
@@ -38,116 +38,36 @@
   ];
 
   // ── State ─────────────────────────────────────────────────────────────────
-  var _active  = false;   // narration quest is on
-  var _ctx     = null;    // AudioContext
-  var _master  = null;    // master GainNode for ambient
+  var _active = false;
 
   // ── Button helpers ────────────────────────────────────────────────────────
   function _btn() { return document.getElementById('audioBtn'); }
+
+  function _toggleClasses(list, method) {
+    var b = _btn();
+    if (!b || !list) return;
+    (Array.isArray(list) ? list : [list]).forEach(function (name) {
+      if (name) b.classList[method](name);
+    });
+  }
 
   function _setBtn(icon, label, add, remove) {
     var b = _btn();
     if (!b) return;
     b.querySelector('.a-icon').textContent  = icon;
     b.querySelector('.a-label').textContent = label;
-    if (add)    b.classList.add(add);
-    if (remove) b.classList.remove(remove);
-  }
-
-  // ── Ambient audio ─────────────────────────────────────────────────────────
-  function _initAmbient() {
-    if (_ctx) { _ctx.resume(); return; }
-    _ctx    = new (global.AudioContext || global.webkitAudioContext)();
-    _master = _ctx.createGain();
-    _master.gain.setValueAtTime(0, _ctx.currentTime);
-
-    var comp = _ctx.createDynamicsCompressor();
-    comp.threshold.setValueAtTime(-24, _ctx.currentTime);
-    comp.ratio.setValueAtTime(4, _ctx.currentTime);
-    comp.connect(_master);
-    _master.connect(_ctx.destination);
-
-    // A-minor drone: 5 oscillators with micro-detuning + slow tremolo LFO
-    [[110, 0.055], [165, 0.038], [220, 0.028], [330, 0.014], [440, 0.008]]
-      .forEach(function (pair) {
-        var freq = pair[0], amp = pair[1];
-        var osc = _ctx.createOscillator();
-        var g   = _ctx.createGain();
-        osc.frequency.setValueAtTime(freq * (1 + (Math.random() - 0.5) * 0.003), _ctx.currentTime);
-        osc.type = 'sine';
-        g.gain.setValueAtTime(amp, _ctx.currentTime);
-
-        var lfo  = _ctx.createOscillator();
-        var lfoG = _ctx.createGain();
-        lfo.frequency.setValueAtTime(0.08 + Math.random() * 0.18, _ctx.currentTime);
-        lfoG.gain.setValueAtTime(amp * 0.25, _ctx.currentTime);
-        lfo.connect(lfoG);
-        lfoG.connect(g.gain);
-        lfo.start();
-
-        osc.connect(g);
-        g.connect(comp);
-        osc.start();
-      });
-
-    // Desert wind: bandpass-filtered white noise
-    var bufLen   = _ctx.sampleRate * 3;
-    var noiseBuf = _ctx.createBuffer(1, bufLen, _ctx.sampleRate);
-    var nd       = noiseBuf.getChannelData(0);
-    for (var i = 0; i < bufLen; i++) nd[i] = Math.random() * 2 - 1;
-
-    var noiseSrc = _ctx.createBufferSource();
-    noiseSrc.buffer = noiseBuf;
-    noiseSrc.loop   = true;
-
-    var windFilt = _ctx.createBiquadFilter();
-    windFilt.type = 'bandpass';
-    windFilt.frequency.setValueAtTime(380, _ctx.currentTime);
-    windFilt.Q.setValueAtTime(0.45, _ctx.currentTime);
-
-    var windG = _ctx.createGain();
-    windG.gain.setValueAtTime(0.036, _ctx.currentTime);
-
-    noiseSrc.connect(windFilt);
-    windFilt.connect(windG);
-    windG.connect(comp);
-    noiseSrc.start();
-
-    _scheduleBell();
-  }
-
-  function _setAmbientVol(target, duration) {
-    if (!_master || !_ctx) return;
-    var now = _ctx.currentTime;
-    _master.gain.cancelScheduledValues(now);
-    _master.gain.setValueAtTime(_master.gain.value, now);
-    _master.gain.linearRampToValueAtTime(target, now + duration);
-  }
-
-  // Occasional soft bell tones (528–880 Hz, every 12–38 s)
-  function _scheduleBell() {
-    setTimeout(function () {
-      if (!_ctx || !_master) return;
-      var freq = [528, 660, 792, 880][Math.floor(Math.random() * 4)];
-      var osc  = _ctx.createOscillator();
-      var env  = _ctx.createGain();
-      var now  = _ctx.currentTime;
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-      env.gain.setValueAtTime(0,     now);
-      env.gain.linearRampToValueAtTime(0.05,   now + 0.015);
-      env.gain.exponentialRampToValueAtTime(0.0001, now + 4);
-      osc.connect(env);
-      env.connect(_master);
-      osc.start(now);
-      osc.stop(now + 4.5);
-      _scheduleBell();
-    }, 12000 + Math.random() * 26000);
+    _toggleClasses(add, 'add');
+    _toggleClasses(remove, 'remove');
   }
 
   // ── TTS narration ─────────────────────────────────────────────────────────
   function _speak(index) {
     var synth = global.speechSynthesis;
+    if (!synth || typeof global.SpeechSynthesisUtterance !== 'function') {
+      _active = false;
+      _setBtn('×', 'Аудио недоступно', null, ['playing', 'paused']);
+      return;
+    }
     synth.cancel();
 
     var text = TEXTS[index];
@@ -168,11 +88,7 @@
 
     utter.onend = function () {
       _active = false;
-      _setAmbientVol(0.7, 2);
-      _setBtn('▶', 'Слушать снова', null, 'playing paused'.split(' '));
-      // classList.remove accepts a single string or spread; call twice to be safe
-      var b = _btn();
-      if (b) { b.classList.remove('playing'); b.classList.remove('paused'); }
+      _setBtn('▶', 'Слушать снова', null, ['playing', 'paused']);
     };
 
     synth.speak(utter);
@@ -186,8 +102,12 @@
      * Called by the #audioBtn onclick handler in index.html.
      */
     toggle: function () {
-      _initAmbient();
       var synth = global.speechSynthesis;
+      if (!synth || typeof global.SpeechSynthesisUtterance !== 'function') {
+        _active = false;
+        _setBtn('×', 'Аудио недоступно', null, ['playing', 'paused']);
+        return;
+      }
 
       // Resolve current narration state and act
       var currentScreen = (global.state && global.state.day != null) ? global.state.day : 0;
@@ -195,20 +115,16 @@
       if (!_active) {
         _active = true;
         _speak(currentScreen);
-        _setAmbientVol(0.3, 1.5);
         _setBtn('⏸', 'Пауза', 'playing', 'paused');
       } else if (synth.speaking && !synth.paused) {
         synth.pause();
-        _setAmbientVol(0.72, 0.8);
         _setBtn('▶', 'Продолжить', 'paused', 'playing');
       } else if (synth.paused) {
         synth.resume();
-        _setAmbientVol(0.3, 0.8);
         _setBtn('⏸', 'Пауза', 'playing', 'paused');
       } else {
         // Narration ended — replay
         _speak(currentScreen);
-        _setAmbientVol(0.3, 1);
         _setBtn('⏸', 'Пауза', 'playing', 'paused');
       }
     },
