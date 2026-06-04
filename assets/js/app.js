@@ -5,8 +5,7 @@ const state = {
   choices: [],
   journalEntries: [],
   sortScore: 0,
-  scaleValue: 50,
-  glossaryOpen: false
+  scaleValue: 50
 };
 window.state = state;
 
@@ -89,6 +88,24 @@ function footerCredit() {
   return `<div class="footer-credit">По сихе <span>רבי מנחם מנדל שניאורסון זי"ע</span> · Беаалотха, 19 Сивана 5751 · Ликутей Сихот, том 39</div>`;
 }
 
+function chapterGlossary(items) {
+  const itemsHtml = items.map(item => `
+    <div class="glossary-item">
+      <div class="glossary-term">${item.term}</div>
+      <div class="glossary-def">${item.def}</div>
+      ${item.ref ? `<div class="glossary-ref">${item.ref}</div>` : ''}
+    </div>`).join('');
+  return `
+  <div class="chapter-glossary">
+    <button class="chapter-glossary-btn" onclick="this.parentElement.classList.toggle('open')">
+      מִלּוֹן · Глоссарий главы ▾
+    </button>
+    <div class="chapter-glossary-panel">
+      ${itemsHtml}
+    </div>
+  </div>`;
+}
+
 function mannaScene(tentPos, label) {
   return `
   <div class="manna-scene" id="mannaScene">
@@ -124,9 +141,9 @@ function renderHome(el) {
   el.innerHTML = `
     <div class="home-eyebrow">הָעִיקָּר הַשְּׁנֵים עָשָׂר · 12-й принцип веры</div>
 
-    <div class="hebrew-title">מַאֲמִין בֶּאֱמוּנָה שְׁלֵמָה</div>
+    <div class="hebrew-title">אֲנִי מַאֲמִין בֶּאֱמוּנָה שְׁלֵמָה</div>
     <div class="russian-subtitle">Верю полной верой в приход Мошиаха</div>
-    <div class="rebbe-credit">מַאֲמִין בֶּאֱמוּנָה שְׁלֵמָה בְּבִיאַת הַמָּשִׁיחַ</div>
+    <div class="rebbe-credit">אֲנִי מַאֲמִין בֶּאֱמוּנָה שְׁלֵמָה בְּבִיאַת הַמָּשִׁיחַ</div>
 
     ${divider()}
 
@@ -192,6 +209,14 @@ function renderIntro(el) {
 
     <button class="btn-primary" onclick="next()">Выйти из шатра ←</button>
 
+    ${chapterGlossary([
+      { term: 'מָן · Ман', def: 'Небесная пища, ниспосланная евреям в пустыне. В сихе Ребе — символ духовной пищи для каждого еврея.' },
+      { term: 'צַדִּיק · Цадик', def: 'Праведник. Ман спускался к нему у входа в шатёр в виде готового хлеба.', ref: 'Йома 75а' },
+      { term: 'בֵּינוֹנִי · Бейнони', def: '«Средний» — тот, чьи добрые дела и грехи уравновешены. Должен был выходить за лагерь.', ref: 'Тания, гл. 12' },
+      { term: 'רָשָׁע · Раша', def: 'Грешник. Искал ман далеко в поле и должен был молоть. Но ман всё равно питал его.' },
+      { term: 'גְּאוּלָה · Геула', def: 'Избавление, приход Мошиаха. Ребе: «Последнее поколение изгнания — первое поколение Геулы».' }
+    ])}
+
     ${footerCredit()}
   `;
 }
@@ -224,6 +249,12 @@ function renderDay1(el) {
     <div id="btn1" class="hidden">
       <button class="btn-primary" onclick="next()">Следующий день →</button>
     </div>
+
+    ${chapterGlossary([
+      { term: 'צַדִּיק · Цадик', def: 'Праведник. Ман спускался к нему у входа в шатёр в виде готового хлеба.', ref: 'Йома 75а' },
+      { term: 'בֵּינוֹנִי · Бейнони', def: '«Средний» — тот, чьи добрые дела и грехи уравновешены. Должен был выходить за лагерь.', ref: 'Тания, гл. 12' },
+      { term: 'רָשָׁע · Раша', def: 'Грешник. Искал ман далеко в поле и должен был молоть. Но ман всё равно питал его.' }
+    ])}
 
     ${footerCredit()}
   `;
@@ -328,6 +359,12 @@ function renderDay2(el) {
       <button class="btn-primary" onclick="next()">Следующий день →</button>
     </div>
 
+    ${chapterGlossary([
+      { term: 'נִגְלֶה · Нигле', def: 'Открытое учение Торы — hалаха, Гемара. Параллель «хлеба с земли» — требует труда, имеет вопросы.' },
+      { term: 'פְּנִימִיּוּת הַתּוֹרָה · Пнимиют аТора', def: 'Внутреннее учение — Кабала, Хасидус. Параллель «хлеба с Небес» — без неразрешимых вопросов.' },
+      { term: 'מָן · Ман', def: 'Небесная пища, ниспосланная евреям в пустыне. В сихе Ребе — символ духовной пищи для каждого еврея.' }
+    ])}
+
     ${footerCredit()}
   `;
 
@@ -415,6 +452,11 @@ function renderDay3(el) {
     <button class="btn-secondary" onclick="submitJournal3()">Записать мысль</button>
     <button class="btn-primary" onclick="next()">Следующий день →</button>
 
+    ${chapterGlossary([
+      { term: 'תְּשׁוּבָה · Тшува', def: 'Возвращение к Б-гу. Ман постепенно пробуждал тшуву даже в тех, кто нёс идола. Работает изнутри, неспешно.' },
+      { term: 'מָן · Ман', def: 'Небесная пища без отходов — символ духовного света, очищающего душу. Питал каждого еврея, независимо от уровня.' }
+    ])}
+
     ${footerCredit()}
   `;
   spawnManna(8, [40, 80]);
@@ -472,6 +514,12 @@ function renderDay4(el) {
     <div id="scaleFeedback" class="hidden"></div>
 
     <button class="btn-primary" onclick="next()">Следующий день →</button>
+
+    ${chapterGlossary([
+      { term: 'גַּשְׁמִיּוּת · Гашмиют', def: 'Материальный мир, физическое измерение бытия. Самое плотное облачение Б-жественного света.' },
+      { term: 'רוּחָנִיּוּת · Рухниют', def: 'Духовность, нематериальное измерение. Ман был духовным светом высочайших миров, облачённым в физическую пищу.' },
+      { term: 'מֹשֶׁה רַבֵּינוּ · Моше Рабейну', def: 'Моше-учитель наш. Провёл 40 дней на Синае без еды, питаясь духовным маном, как ангелы.', ref: 'Тора Ор, Ваякhел' }
+    ])}
 
     ${footerCredit()}
   `;
@@ -549,6 +597,11 @@ function renderDay5(el) {
     <div id="mannaBtn" class="hidden">
       <button class="btn-primary" onclick="next()">К Шабесу →</button>
     </div>
+
+    ${chapterGlossary([
+      { term: 'שַׁבָּת · Шабат', def: 'Седьмой день недели — день покоя и святости. Зоhар: все шесть дней получают своё благословение именно от Шабата.' },
+      { term: 'מָן · Ман', def: 'В Шабат не спускался — миры поднимались вверх, и низводить духовное в материальное было невозможно. Но именно Шабат питал весь ман недели.' }
+    ])}
 
     ${footerCredit()}
   `;
@@ -686,6 +739,12 @@ function renderDay6(el) {
     <div id="journal6fb" class="hidden"></div>
     <button class="btn-primary" onclick="next()" style="margin-top:20px">Шабес наступает →</button>
 
+    ${chapterGlossary([
+      { term: 'תְּשׁוּבָה · Тшува', def: 'Возвращение к Б-гу. Ман работал медленно, но неуклонно — каждый кусочек приближал грешника к тшуве.' },
+      { term: 'גְּאוּלָה · Геула', def: 'Избавление. Ребе Раяц: «Сразу за тшувой — Геула». Тшува и Геула неразрывно связаны.' },
+      { term: 'הרבי הריי״צ · Ребе Раяц', def: 'Рабби Йосеф Ицхак Шнеерсон (1880–1950) — шестой Любавичский Ребе. Тесть нынешнего Ребе.' }
+    ])}
+
     ${footerCredit()}
   `;
 }
@@ -759,6 +818,12 @@ function renderShabbat(el) {
 
     <button class="btn-primary" onclick="next()">К заключению →</button>
 
+    ${chapterGlossary([
+      { term: 'שַׁבָּת · Шабат', def: 'Источник благословения для всех дней недели. Зоhар: כִּלָּיוֹן — томление, жажда Б-га.' },
+      { term: 'מָן · Ман', def: 'Небесная пища — символ пути каждого еврея через пустыню жизни. Никто не был оставлен.' },
+      { term: 'גְּאוּלָה · Геула', def: 'Избавление для всего Израиля во всех поколениях.' }
+    ])}
+
     ${footerCredit()}
   `;
 }
@@ -810,6 +875,12 @@ function renderFinal(el) {
       <div style="font-family:'Noto Serif Hebrew',serif;font-size:1.1rem;color:var(--gold-deep);">יְחִי אֲדוֹנֵנוּ מוֹרֵנוּ וְרַבֵּנוּ מֶלֶךְ הַמָּשִׁיחַ לְעוֹלָם וָעֶד</div>
     </div>
 
+    ${chapterGlossary([
+      { term: 'גְּאוּלָה · Геула', def: 'Избавление — приход Мошиаха. Ребе: «Последнее поколение изгнания — первое поколение Геулы».' },
+      { term: 'תְּשׁוּבָה · Тшува', def: '«Сразу за тшувой — Геула». Тшува — ключ к Избавлению.' },
+      { term: 'מָן · Ман', def: 'Духовная пища, которая питала каждого еврея. Урок: Б-г не оставляет никого.' }
+    ])}
+
     ${footerCredit()}
   `;
 }
@@ -833,11 +904,6 @@ function finalChoice(btn, idx) {
   </div>`;
   fb.classList.remove('hidden');
   document.getElementById('restartDiv').classList.remove('hidden');
-}
-
-function toggleGlossary() {
-  state.glossaryOpen = !state.glossaryOpen;
-  document.getElementById('glossaryPanel').classList.toggle('open', state.glossaryOpen);
 }
 
 // ===== TOOLTIP SYSTEM =====

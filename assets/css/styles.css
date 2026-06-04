@@ -583,48 +583,39 @@
     box-shadow: 0 0 0 6px rgba(201,146,42,0.15);
   }
 
-  /* GLOSSARY */
-  .glossary-bar {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 100;
+  /* GLOSSARY (chapter inline) */
+  .chapter-glossary {
+    margin: 24px 0 8px;
+    border: 1px solid var(--gold);
+    border-radius: 4px;
+    overflow: hidden;
+    direction: ltr;
   }
-  .glossary-btn {
-    background: var(--gold-deep);
-    color: var(--parchment);
+  .chapter-glossary-btn {
+    width: 100%;
+    background: rgba(201,146,42,0.08);
+    color: var(--gold-deep);
     border: none;
+    border-bottom: 1px solid transparent;
     padding: 10px 16px;
-    border-radius: 30px;
     font-family: 'Noto Serif Hebrew', serif;
     font-size: 0.9rem;
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-    transition: all 0.2s;
+    text-align: center;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
   }
-  .glossary-btn:hover { background: var(--gold); transform: translateY(-2px); }
-
-  .glossary-panel {
-    position: fixed;
-    bottom: 70px; right: 20px;
-    width: 300px;
-    background: var(--parchment);
-    border: 1px solid var(--gold-deep);
-    border-radius: 4px;
-    padding: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  .chapter-glossary-btn:hover { background: rgba(201,146,42,0.15); }
+  .chapter-glossary.open .chapter-glossary-btn { border-bottom-color: var(--sand-dark); }
+  .chapter-glossary-panel {
     display: none;
-    z-index: 100;
-    max-height: 70vh;
-    overflow-y: auto;
-    direction: rtl;
+    padding: 16px;
   }
-  .glossary-panel.open { display: block; }
+  .chapter-glossary.open .chapter-glossary-panel { display: block; }
   .glossary-item {
     margin-bottom: 14px;
     padding-bottom: 14px;
     border-bottom: 1px solid var(--sand-dark);
-    direction: ltr;
   }
   .glossary-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
   .glossary-term { font-family: 'Noto Serif Hebrew', serif; font-size: 1.1rem; color: var(--gold-deep); }
