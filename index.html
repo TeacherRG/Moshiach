@@ -733,6 +733,86 @@
   /* HIDDEN */
   .hidden { display: none !important; }
 
+  /* CUSTOM TOOLTIPS */
+  .tooltip-bubble {
+    position: fixed;
+    z-index: 500;
+    background: var(--parchment);
+    border: 1px solid var(--gold-deep);
+    border-radius: 4px;
+    padding: 10px 14px;
+    max-width: 220px;
+    min-width: 130px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.38), inset 0 0 20px rgba(201,146,42,0.04);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    direction: ltr;
+    line-height: 1.55;
+  }
+  .tooltip-bubble.visible { opacity: 1; transform: translateY(0); }
+  .tooltip-heb {
+    font-family: 'Noto Serif Hebrew', serif;
+    font-size: 0.95rem;
+    color: var(--gold-deep);
+    display: block;
+    direction: rtl;
+    text-align: right;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(201,146,42,0.25);
+  }
+  .tooltip-def {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.87rem;
+    color: var(--text-mid);
+    display: block;
+  }
+  .tooltip-arrow {
+    position: absolute;
+    width: 0; height: 0;
+  }
+  .tooltip-arrow.down {
+    bottom: -6px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid var(--gold-deep);
+  }
+  .tooltip-arrow.up {
+    top: -6px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid var(--gold-deep);
+  }
+
+  /* AUDIO CONTROL */
+  .audio-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 100;
+  }
+  .audio-btn {
+    background: var(--night-mid);
+    color: var(--sand);
+    border: 1px solid rgba(201,146,42,0.3);
+    padding: 10px 15px;
+    border-radius: 30px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.03em;
+  }
+  .audio-btn:hover { background: var(--night); border-color: var(--gold); transform: translateY(-2px); }
+  .audio-btn.playing { background: var(--gold-deep); color: var(--parchment); border-color: var(--gold); }
+  .audio-btn .a-icon { font-size: 0.95rem; }
+
   /* MOBILE */
   @media (max-width: 600px) {
     .card { padding: 32px 24px; }
@@ -805,6 +885,18 @@
       <div class="glossary-def">Гашмиют — материальное. Рухниют — духовное. Ман был духовным светом, облачённым в материю.</div>
     </div>
   </div>
+</div>
+
+<!-- AUDIO -->
+<div class="audio-bar">
+  <button class="audio-btn" id="audioBtn" onclick="toggleAudio()" title="">
+    <span class="a-icon">🔇</span><span>Атмосфера</span>
+  </button>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tooltip-bubble" id="tooltipBubble" role="tooltip" aria-hidden="true">
+  <div class="tooltip-arrow" id="tooltipArrow"></div>
 </div>
 
 <!-- APP -->
@@ -950,7 +1042,7 @@ function renderIntro(el) {
 
     <div class="body-text">
       Три с половиной тысячи лет назад евреи шли через пустыню. Каждое утро с неба спускался ман — небесный хлеб. Но <strong>где</strong> он появлялся и <strong>в каком виде</strong> — зависело от духовного уровня каждого человека.<br><br>
-      Любавичский Ребе <span class="term" title="Рабби Менахем Мендл Шнеерсон">רבי מנחם מנדל שניאורסון</span> учит: ман — это не просто история. Это зеркало, которое показывает, кто мы сейчас.
+      Любавичский Ребе <span class="term" data-tip-heb="רבי מנחם מנדל שניאורסון" data-tip="Любавичский Ребе — глава движения Хабад-Любавич (1951–1994). Дал тысячи сихот, раскрывших глубины хасидского учения.">רבי מנחם מנדל שניאורסון</span> учит: ман — это не просто история. Это зеркало, которое показывает, кто мы сейчас.
     </div>
 
     ${divider()}
@@ -992,7 +1084,7 @@ function renderDay1(el) {
       <div class="quote-source">Начало недели мана в пустыне</div>
     </div>
 
-    <div class="body-text">Рассвет. <span class="term">תְּפִלַּת שַׁחֲרִית</span> (утренняя молитва) вот-вот начнётся. Ты замечаешь: твой сосед по шатру не встаёт...</div>
+    <div class="body-text">Рассвет. <span class="term" data-tip-heb="תְּפִלַּת שַׁחֲרִית · Тфилат Шахарит" data-tip="Утренняя молитва в иудаизме. Один из трёх ежедневных молитвенных порядков, читается на рассвете.">תְּפִלַּת שַׁחֲרִית</span> (утренняя молитва) вот-вот начнётся. Ты замечаешь: твой сосед по шатру не встаёт...</div>
 
     <div class="choices" id="choices1">
       <button class="choice-btn" onclick="makeChoice1(0)">🤝 Разбужу его — каждый еврей важен</button>
@@ -1179,7 +1271,7 @@ function renderDay3(el) {
       <div class="quote-source">Мехилта, Шмот 16:4 · цитируется Ребе</div>
     </div>
 
-    <div class="body-text">Ребе объясняет: ман не менял грешника мгновенно. Но процесс шёл. Это как <span class="term" title="Тшува — возвращение к Б-гу">תְּשׁוּבָה</span> — она не всегда происходит сразу. Но духовная пища продолжает работать внутри.</div>
+    <div class="body-text">Ребе объясняет: ман не менял грешника мгновенно. Но процесс шёл. Это как <span class="term" data-tip-heb="תְּשׁוּבָה · Тшува" data-tip="Возвращение к Б-гу. Духовное пробуждение, которое ман постепенно пробуждал даже в тех, кто нёс идола. Ман работает изнутри.">תְּשׁוּבָה</span> — она не всегда происходит сразу. Но духовная пища продолжает работать внутри.</div>
 
     ${divider()}
 
@@ -1220,7 +1312,7 @@ function renderDay4(el) {
     <div class="scene-title">День четвёртый · יוֹם רְבִיעִי</div>
     <div class="day-title">Моше и небесный хлеб</div>
 
-    <div class="body-text">Ребе приводит неожиданную мысль из <span class="term" title="Тора Ор — сборник хасидских маамаров Алтер Ребе">תּוֹרָה אוֹר</span>: Моше-рабейну провёл 40 дней на горе Синай без еды. Но он всё же «питался» — духовным маном, как ангелы.</div>
+    <div class="body-text">Ребе приводит неожиданную мысль из <span class="term" data-tip-heb="תּוֹרָה אוֹר · Тора Ор" data-tip="Сборник хасидских маамаров Алтер Ребе — рабби Шнеура Залмана из Ляд, основателя движения Хабад.">תּוֹרָה אוֹר</span>: Моше-рабейну провёл 40 дней на горе Синай без еды. Но он всё же «питался» — духовным маном, как ангелы.</div>
 
     <div class="quote-block">
       <div class="quote-hebrew">לֶחֶם אַבִּירִים אָכַל אִישׁ</div>
@@ -1234,7 +1326,7 @@ function renderDay4(el) {
       <div class="quote-source">Тора Ор, Ваякhел; Ликутей Тора, Бамидбар</div>
     </div>
 
-    <div class="body-text">Это учит нас: существует шкала. На одном конце — <span class="term" title="Гашмиют — материальный мир">גַּשְׁמִיּוּת</span> (материальное), на другом — <span class="term" title="Рухниют — духовность">רוּחָנִיּוּת</span> (духовное). Ман существовал на обоих уровнях одновременно.</div>
+    <div class="body-text">Это учит нас: существует шкала. На одном конце — <span class="term" data-tip-heb="גַּשְׁמִיּוּת · Гашмиют" data-tip="Материальный мир, физическое измерение бытия. В учении Хабада — низшая из сфирот, самое плотное облачение Б-жественного света.">גַּשְׁמִיּוּת</span> (материальное), на другом — <span class="term" data-tip-heb="רוּחָנִיּוּת · Рухниют" data-tip="Духовность, нематериальное измерение. Ман был духовным светом высочайших миров, облачённым в физическую пищу.">רוּחָנִיּוּת</span> (духовное). Ман существовал на обоих уровнях одновременно.</div>
 
     <div class="scale-container">
       <div class="scale-labels">
@@ -1289,7 +1381,7 @@ function renderDay5(el) {
     <div class="scene-title">День пятый · יוֹם חֲמִישִׁי</div>
     <div class="day-title">Шабос и ман — связь миров</div>
 
-    <div class="body-text">Ман не спускался в <span class="term" title="Шабат — Суббота, день покоя и святости">שַׁבָּת</span>. Почему? Ребе объясняет через глубокую идею из Зоhара.</div>
+    <div class="body-text">Ман не спускался в <span class="term" data-tip-heb="שַׁבָּת · Шабат" data-tip="Седьмой день недели — день покоя и святости. Зоhар: все шесть дней получают своё благословение именно от Шабата.">שַׁבָּת</span>. Почему? Ребе объясняет через глубокую идею из Зоhара.</div>
 
     <div class="quote-block">
       <div class="quote-hebrew">בְּשַׁבָּת — עֲלִיַּת הָעוֹלָמוֹת. וּבִזְמַן הָעֲלִיָּה אִי אֶפְשָׁר לְהַמְשִׁיךְ מֵרוּחָנִי לְגַשְׁמִי</div>
@@ -1435,9 +1527,9 @@ function renderDay6(el) {
       <div class="quote-source">Ребе, Беаалотха 5751 · на основе Йома 75а</div>
     </div>
 
-    <div class="body-text">Но духовная работа шла. Каждый кусочек мана действовал изнутри. И в конце концов — приводил к <span class="term" title="Тшува — возвращение к Б-гу">תְּשׁוּבָה</span>.</div>
+    <div class="body-text">Но духовная работа шла. Каждый кусочек мана действовал изнутри. И в конце концов — приводил к <span class="term" data-tip-heb="תְּשׁוּבָה · Тшува" data-tip="Возвращение к Б-гу. Ребе: сразу за тшувой — Геула. Ман постепенно готовил к этому каждого еврея.">תְּשׁוּבָה</span>.</div>
 
-    <div class="body-text">Ребе связывает это с Геулой. Он цитирует своего тестя — <span class="term" title="Предыдущий Любавичский Ребе">הרבי הריי״צ</span>:</div>
+    <div class="body-text">Ребе связывает это с Геулой. Он цитирует своего тестя — <span class="term" data-tip-heb="הרבי הריי״צ · Ребе Раяц" data-tip="Рабби Йосеф Ицхак Шнеерсон (1880–1950) — шестой Любавичский Ребе. Тесть нынешнего Ребе. Его призыв: тшува — Геула.">הרבי הריי״צ</span>:</div>
 
     <div class="quote-block">
       <div class="quote-hebrew">תִּיכֶף לִתְשׁוּבָה — גְּאוּלָה</div>
@@ -1618,6 +1710,212 @@ function finalChoice(btn, idx) {
 function toggleGlossary() {
   state.glossaryOpen = !state.glossaryOpen;
   document.getElementById('glossaryPanel').classList.toggle('open', state.glossaryOpen);
+}
+
+// ===== TOOLTIP SYSTEM =====
+(function () {
+  const bubble = document.getElementById('tooltipBubble');
+  let hideTimer, arrowLeft = '50%';
+
+  function positionAndShow(term) {
+    clearTimeout(hideTimer);
+    const tip = term.dataset.tip || '';
+    const heb = term.dataset.tipHeb || '';
+    if (!tip && !heb) return;
+
+    bubble.innerHTML =
+      '<div class="tooltip-arrow" id="tooltipArrow"></div>' +
+      (heb ? '<span class="tooltip-heb">' + heb + '</span>' : '') +
+      (tip ? '<span class="tooltip-def">' + tip + '</span>' : '');
+
+    // Layout bubble off-screen first to measure
+    bubble.style.visibility = 'hidden';
+    bubble.style.opacity = '0';
+    bubble.style.left = '0px';
+    bubble.style.top = '-9999px';
+    bubble.classList.add('visible');
+
+    const bw = bubble.offsetWidth;
+    const bh = bubble.offsetHeight;
+    bubble.style.visibility = '';
+
+    const rect = term.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+
+    // Horizontal: center on term, clamp inside viewport
+    let x = cx - bw / 2;
+    x = Math.max(8, Math.min(window.innerWidth - bw - 8, x));
+
+    // Arrow position relative to bubble
+    const arrX = Math.max(10, Math.min(bw - 16, cx - x));
+
+    const arrowEl = bubble.querySelector('.tooltip-arrow');
+    arrowEl.style.left = arrX + 'px';
+
+    // Vertical: prefer above, fall back to below
+    let y;
+    if (rect.top - bh - 14 >= 8) {
+      y = rect.top - bh - 14;
+      arrowEl.className = 'tooltip-arrow down';
+    } else {
+      y = rect.bottom + 10;
+      arrowEl.className = 'tooltip-arrow up';
+    }
+
+    bubble.style.left = x + 'px';
+    bubble.style.top = y + 'px';
+  }
+
+  function hideBubble() {
+    hideTimer = setTimeout(() => bubble.classList.remove('visible'), 90);
+  }
+
+  // Mouse
+  document.addEventListener('mouseover', function (e) {
+    const t = e.target.closest('.term[data-tip],.term[data-tip-heb]');
+    if (t) positionAndShow(t);
+  });
+  document.addEventListener('mouseout', function (e) {
+    if (e.target.closest('.term')) hideBubble();
+  });
+
+  // Touch: tap to toggle
+  document.addEventListener('touchend', function (e) {
+    const t = e.target.closest('.term[data-tip],.term[data-tip-heb]');
+    if (t) {
+      e.preventDefault();
+      bubble.classList.contains('visible') ? bubble.classList.remove('visible') : positionAndShow(t);
+    } else {
+      hideBubble();
+    }
+  }, { passive: false });
+})();
+
+// ===== AUDIO SYSTEM =====
+var _audioCtx = null;
+var _audioMaster = null;
+var _audioPlaying = false;
+
+function toggleAudio() {
+  var btn = document.getElementById('audioBtn');
+  if (!_audioCtx) {
+    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    _buildAmbient();
+    _audioPlaying = true;
+  } else {
+    _audioPlaying = !_audioPlaying;
+  }
+
+  var now = _audioCtx.currentTime;
+  _audioMaster.gain.cancelScheduledValues(now);
+  _audioMaster.gain.setValueAtTime(_audioMaster.gain.value, now);
+
+  if (_audioPlaying) {
+    _audioCtx.resume();
+    _audioMaster.gain.linearRampToValueAtTime(1, now + 2.5);
+    btn.querySelector('.a-icon').textContent = '🔊';
+    btn.classList.add('playing');
+  } else {
+    _audioMaster.gain.linearRampToValueAtTime(0, now + 1.8);
+    btn.querySelector('.a-icon').textContent = '🔇';
+    btn.classList.remove('playing');
+  }
+}
+
+function _buildAmbient() {
+  var ctx = _audioCtx;
+  _audioMaster = ctx.createGain();
+  _audioMaster.gain.setValueAtTime(0, ctx.currentTime);
+
+  var comp = ctx.createDynamicsCompressor();
+  comp.threshold.setValueAtTime(-24, ctx.currentTime);
+  comp.ratio.setValueAtTime(4, ctx.currentTime);
+  comp.connect(_audioMaster);
+  _audioMaster.connect(ctx.destination);
+
+  // Drone — A minor chord: A2 E3 A3 E4 with micro-detuning
+  [[110, 0.055], [165, 0.038], [220, 0.028], [330, 0.014], [440, 0.008]].forEach(function (pair) {
+    var freq = pair[0], amp = pair[1];
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    // Micro-detune each oscillator for natural beating
+    osc.frequency.setValueAtTime(freq * (1 + (Math.random() - 0.5) * 0.003), ctx.currentTime);
+    osc.type = 'sine';
+    g.gain.setValueAtTime(amp, ctx.currentTime);
+
+    // Slow LFO tremolo
+    var lfo = ctx.createOscillator();
+    var lfoG = ctx.createGain();
+    lfo.frequency.setValueAtTime(0.08 + Math.random() * 0.18, ctx.currentTime);
+    lfoG.gain.setValueAtTime(amp * 0.25, ctx.currentTime);
+    lfo.connect(lfoG);
+    lfoG.connect(g.gain);
+    lfo.start();
+
+    osc.connect(g);
+    g.connect(comp);
+    osc.start();
+  });
+
+  // Desert wind: filtered white noise
+  var bufLen = ctx.sampleRate * 3;
+  var noiseBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  var nd = noiseBuf.getChannelData(0);
+  for (var i = 0; i < bufLen; i++) nd[i] = Math.random() * 2 - 1;
+
+  var noiseSrc = ctx.createBufferSource();
+  noiseSrc.buffer = noiseBuf;
+  noiseSrc.loop = true;
+
+  var windFilt = ctx.createBiquadFilter();
+  windFilt.type = 'bandpass';
+  windFilt.frequency.setValueAtTime(380, ctx.currentTime);
+  windFilt.Q.setValueAtTime(0.45, ctx.currentTime);
+
+  var windG = ctx.createGain();
+  windG.gain.setValueAtTime(0.038, ctx.currentTime);
+
+  // Slow wind swell LFO
+  var wLfo = ctx.createOscillator();
+  var wLfoG = ctx.createGain();
+  wLfo.frequency.setValueAtTime(0.04, ctx.currentTime);
+  wLfoG.gain.setValueAtTime(0.022, ctx.currentTime);
+  wLfo.connect(wLfoG);
+  wLfoG.connect(windG.gain);
+  wLfo.start();
+
+  noiseSrc.connect(windFilt);
+  windFilt.connect(windG);
+  windG.connect(comp);
+  noiseSrc.start();
+
+  // Schedule occasional soft bell tones
+  _scheduleBell();
+}
+
+function _scheduleBell() {
+  var delay = 10000 + Math.random() * 22000;
+  setTimeout(function () {
+    if (!_audioCtx || !_audioMaster) return;
+    if (_audioPlaying) {
+      var ctx = _audioCtx;
+      var bellFreqs = [528, 660, 792, 880, 1056];
+      var freq = bellFreqs[Math.floor(Math.random() * bellFreqs.length)];
+      var osc = ctx.createOscillator();
+      var env = ctx.createGain();
+      var now = ctx.currentTime;
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      env.gain.setValueAtTime(0, now);
+      env.gain.linearRampToValueAtTime(0.06, now + 0.015);
+      env.gain.exponentialRampToValueAtTime(0.0001, now + 4);
+      osc.connect(env);
+      env.connect(_audioMaster);
+      osc.start(now);
+      osc.stop(now + 4.5);
+    }
+    _scheduleBell();
+  }, delay);
 }
 
 // ===== START =====
