@@ -192,39 +192,73 @@ function spawnManna(count, xRange) {
   }, 500);
 }
 
+const _chapterOpen = [true];
+
 function renderMenu() {
   const common = tr().common;
   const sections = tr().sections;
   const button = document.getElementById('menuToggleBtn');
   const panel = document.getElementById('topMenuPanel');
-  const title = document.getElementById('menuTitle');
-  const subtitle = document.getElementById('menuSubtitle');
-  const aboutTitle = document.getElementById('menuAboutTitle');
-  const aboutText = document.getElementById('menuAboutText');
-  const sectionsTitle = document.getElementById('menuSectionsTitle');
-  const languageTitle = document.getElementById('menuLanguageTitle');
-  const sectionsList = document.getElementById('menuSectionsList');
+  const aboutBtn = document.getElementById('menuAboutBtn');
+  const chaptersList = document.getElementById('menuChaptersList');
   const ruBtn = document.getElementById('langRuBtn');
   const deBtn = document.getElementById('langDeBtn');
 
   button.setAttribute('aria-label', panel.classList.contains('open') ? common.menuClose : common.menuOpen);
-  title.textContent = common.menuTitle;
-  subtitle.textContent = common.menuSubtitle;
-  aboutTitle.textContent = common.menuAboutTitle;
-  aboutText.textContent = common.menuAboutText;
-  sectionsTitle.textContent = common.menuSectionsTitle;
-  languageTitle.textContent = common.languageTitle;
+  aboutBtn.textContent = common.menuAboutTitle;
   ruBtn.textContent = common.languageRu;
   deBtn.textContent = common.languageDe;
   ruBtn.classList.toggle('active', state.lang === 'ru');
   deBtn.classList.toggle('active', state.lang === 'de');
 
-  sectionsList.innerHTML = sections.map((label, index) => {
-    const target = index === 1 ? 'about' : index > 1 ? index - 1 : 0;
-    const active = (index === 0 && state.day === 0) || (index > 1 && state.day === index - 1) ? 'active' : '';
-    return `<button class="menu-section-link ${active}" onclick="menuNavigate(${target})">${label}</button>`;
-  }).join('');
+  const subsections = [{ label: sections[0], screen: 0 }].concat(
+    sections.slice(2).map((label, i) => ({ label, screen: i + 1 }))
+  );
+
+  const chapterTitle = tr().screens.home.chapterTitle;
+  const chapterHe = src().home.chapterHe;
+  const isOpen = _chapterOpen[0];
+
+  chaptersList.innerHTML = `
+    <div class="menu-chapter-item">
+      <button class="menu-chapter-header${isOpen ? ' open' : ''}" id="chapterHeader0" onclick="toggleChapterMenu(0)" type="button">
+        <span class="menu-chapter-he">${chapterHe}</span>
+        <span class="menu-chapter-title">${chapterTitle}</span>
+        <span class="menu-chapter-arrow">▾</span>
+      </button>
+      <div class="menu-chapter-subs${isOpen ? ' open' : ''}" id="chapterSubs0">
+        ${subsections.map(sub => {
+          const active = sub.screen === state.day ? ' active' : '';
+          return `<button class="menu-sub-link${active}" onclick="menuNavigate(${sub.screen})" type="button">${sub.label}</button>`;
+        }).join('')}
+      </div>
+    </div>`;
 }
+
+function toggleChapterMenu(idx) {
+  _chapterOpen[idx] = !_chapterOpen[idx];
+  const subs = document.getElementById(`chapterSubs${idx}`);
+  const header = document.getElementById(`chapterHeader${idx}`);
+  if (subs && header) {
+    subs.classList.toggle('open', _chapterOpen[idx]);
+    header.classList.toggle('open', _chapterOpen[idx]);
+  }
+}
+window.toggleChapterMenu = toggleChapterMenu;
+
+function showAboutModal() {
+  document.getElementById('aboutModalTitle').textContent = tr().common.menuAboutTitle;
+  document.getElementById('aboutModalText').textContent = tr().common.menuAboutText;
+  document.getElementById('aboutModal').classList.add('visible');
+  document.getElementById('topMenuPanel').classList.remove('open');
+  document.getElementById('menuToggleBtn').classList.remove('open');
+}
+window.showAboutModal = showAboutModal;
+
+function closeAboutModal() {
+  document.getElementById('aboutModal').classList.remove('visible');
+}
+window.closeAboutModal = closeAboutModal;
 
 function bindMenuEvents() {
   const button = document.getElementById('menuToggleBtn');
@@ -248,17 +282,6 @@ function menuNavigate(target) {
   const button = document.getElementById('menuToggleBtn');
   panel.classList.remove('open');
   button.classList.remove('open');
-  if (target === 'about') {
-    if (state.day !== 0) {
-      renderScreen(0);
-      setTimeout(() => {
-        document.getElementById('projectAbout')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 120);
-    } else {
-      document.getElementById('projectAbout')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    return;
-  }
   renderScreen(target);
 }
 window.menuNavigate = menuNavigate;
