@@ -472,17 +472,17 @@ function renderDay5(el) {
     ${progressBar(5,7)}
     ${dayDots(5)}
     <div class="scene-title">День пятый · יוֹם חֲמִישִׁי</div>
-    <div class="day-title">Шабос и ман — связь миров</div>
+    <div class="day-title">Шабес и ман — связь миров</div>
 
     <div class="body-text">Ман не спускался в <span class="term" data-tip-heb="שַׁבָּת · Шабат" data-tip="Седьмой день недели — день покоя и святости. Зоhар: все шесть дней получают своё благословение именно от Шабата.">שַׁבָּת</span>. Почему? Ребе объясняет через глубокую идею из Зоhара.</div>
 
     <div class="quote-block">
       <div class="quote-hebrew">בְּשַׁבָּת — עֲלִיַּת הָעוֹלָמוֹת. וּבִזְמַן הָעֲלִיָּה אִי אֶפְשָׁר לְהַמְשִׁיךְ מֵרוּחָנִי לְגַשְׁמִי</div>
-      <div class="quote-russian">«В Шабос — подъём миров. А во время подъёма невозможно низвести духовное в материальное»</div>
+      <div class="quote-russian">«В Шабес — подъём миров. А во время подъёма невозможно низвести духовное в материальное»</div>
       <div class="quote-source">Ребе, Беаалотха 5751</div>
     </div>
 
-    <div class="body-text">Но есть удивительный парадокс — весь ман всей недели получал своё благословение именно из Шабоса:</div>
+    <div class="body-text">Но есть удивительный парадокс — весь ман всей недели получал своё благословение именно из Шабеса:</div>
 
     <div class="quote-block">
       <div class="quote-hebrew">כָּל שֵׁשֶׁת יְמֵי הַשָּׁבוּעַ מְקַבְּלִים בְּרָכָה מִיּוֹם הַשְּׁבִיעִי</div>
@@ -490,12 +490,12 @@ function renderDay5(el) {
       <div class="quote-source">Зоhар, Ваякhел (том 2, стр. 63б)</div>
     </div>
 
-    <div class="body-text">А когда человек не знает, какой раздел Торы читать в данный Шабос — Ребе объясняет: читай раздел о мане. Почему?</div>
+    <div class="body-text">А когда человек не знает, какой раздел Торы читать в данный Шабес — Ребе объясняет: читай раздел о мане. Почему?</div>
 
     <div class="quote-block">
       <div class="quote-hebrew">כָּל הַשְׁפָּעָה שֶׁנִּמְשֶׁכֶת לָעוֹלָם — נִמְשֶׁכֶת עַל יְדֵי הַתּוֹרָה</div>
       <div class="quote-russian">«Каждое влияние, нисходящее в мир — нисходит через Тору»</div>
-      <div class="quote-source">Ребе, там же — объяснение связи мана и Шабоса</div>
+      <div class="quote-source">Ребе, там же — объяснение связи мана и Шабеса</div>
     </div>
 
     ${divider()}
@@ -512,7 +512,7 @@ function renderDay5(el) {
 
     <div id="mannaResult" class="hidden"></div>
     <div id="mannaBtn" class="hidden">
-      <button class="btn-primary" onclick="next()">К Шабосу →</button>
+      <button class="btn-primary" onclick="next()">К Шабесу →</button>
     </div>
 
     ${footerCredit()}
@@ -530,7 +530,7 @@ function _renderMannaGrid() {
     { heb: 'יום ד\'', ru: 'Среда' },
     { heb: 'יום ה\'', ru: 'Четв.' },
     { heb: 'עֶרֶב שַׁבָּת', ru: 'Пятн.' },
-    { heb: 'שַׁבָּת', ru: 'Шабос' },
+    { heb: 'שַׁבָּת', ru: 'Шабес' },
   ];
   const grid = document.getElementById('mannaGrid');
   if (!grid) return;
@@ -588,13 +588,13 @@ function checkMannaDistribution() {
     resultEl.innerHTML = `
       <div class="feedback-box">
         <div class="hebrew">הַשַׁבָּת — מְקוֹר הַבְּרָכָה לְכָל יְמֵי הַשָּׁבוּעַ</div>
-        <div class="translation">Верно! Шабос — источник благословения для всех дней недели.</div>
-        <div class="source">Вот парадокс: Шабос сам не «получает» ман — но именно он даёт жизнь всем остальным дням. Тот, кто поднялся выше получения, становится источником для всех.</div>
+        <div class="translation">Верно! Шабес — источник благословения для всех дней недели.</div>
+        <div class="source">Вот парадокс: Шабес сам не «получает» ман — но именно он даёт жизнь всем остальным дням. Тот, кто поднялся выше получения, становится источником для всех.</div>
       </div>`;
     resultEl.classList.remove('hidden');
     document.getElementById('mannaBtn').classList.remove('hidden');
   } else {
-    const dayLabels = ['воскресенье', 'понедельник', 'вторник', 'среду', 'четверг', 'пятницу', 'Шабос'];
+    const dayLabels = ['воскресенье', 'понедельник', 'вторник', 'среду', 'четверг', 'пятницу', 'Шабес'];
     const wrong = correct.map((v, i) => v !== current[i] ? dayLabels[i] : null).filter(Boolean);
     resultEl.innerHTML = `
       <div style="text-align:center;color:var(--red-accent);font-size:0.9rem;padding:12px 16px;background:rgba(139,32,32,0.06);border-radius:4px;border:1px solid rgba(139,32,32,0.15);">
@@ -635,7 +635,7 @@ function renderDay6(el) {
     <div class="quote-block">
       <div class="quote-hebrew">כְּבָר גָּמְרוּ אֶת הָ"לִיטוֹשׁ", וְצָרִיךְ רַק לַעֲמוֹד מוּכָן לְקַבָּלַת פְּנֵי מָשִׁיחַ</div>
       <div class="quote-russian">«Уже закончили "полировку кнопок", и нужно только стоять готовыми встретить Мошиаха»</div>
-      <div class="quote-source">Ребе, Шабос Беаалотха, 19 Сивана 5751</div>
+      <div class="quote-source">Ребе, Шабес Беаалотха, 19 Сивана 5751</div>
     </div>
 
     ${divider()}
@@ -649,7 +649,7 @@ function renderDay6(el) {
 
     <button class="btn-secondary" onclick="submitJournal6()">Записать</button>
     <div id="journal6fb" class="hidden"></div>
-    <button class="btn-primary" onclick="next()" style="margin-top:20px">Шабос наступает →</button>
+    <button class="btn-primary" onclick="next()" style="margin-top:20px">Шабес наступает →</button>
 
     ${footerCredit()}
   `;
@@ -676,7 +676,7 @@ function renderShabbat(el) {
   el.innerHTML = `
     <div style="text-align:center;margin-bottom:20px;">
       <div style="font-family:'Noto Serif Hebrew',serif;font-size:0.85rem;color:var(--text-light);letter-spacing:0.15em;">שַׁבָּת קֹדֶשׁ</div>
-      <div class="day-title" style="margin-bottom:0">Святой Шабос</div>
+      <div class="day-title" style="margin-bottom:0">Святой Шабес</div>
     </div>
 
     <div class="shabbat-candles">
@@ -742,7 +742,7 @@ function renderFinal(el) {
     <div class="quote-block">
       <div class="quote-hebrew">הַדּוֹר הָאַחֲרוֹן שֶׁל הַגָּלוּת הוּא הַדּוֹר הָרִאשׁוֹן שֶׁל הַגְּאוּלָה — הַגְּאוּלָה לְכָל יִשְׂרָאֵל בְּכָל הַדּוֹרוֹת</div>
       <div class="quote-russian">«Последнее поколение изгнания — это первое поколение Избавления — Избавления для всего Израиля во всех поколениях»</div>
-      <div class="quote-source">Ребе, Шабос Беаалотха, 19 Сивана 5751 · Ликутей Сихот том 39</div>
+      <div class="quote-source">Ребе, Шабес Беаалотха, 19 Сивана 5751 · Ликутей Сихот том 39</div>
     </div>
 
     <div class="quote-block">
