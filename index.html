@@ -19,22 +19,11 @@
     <span></span><span></span><span></span>
   </button>
   <div class="top-menu-panel" id="topMenuPanel">
-    <div class="top-menu-title" id="menuTitle"></div>
-    <div class="top-menu-subtitle" id="menuSubtitle"></div>
-    <div class="top-menu-about">
-      <div class="top-menu-section-heading" id="menuAboutTitle"></div>
-      <div class="top-menu-about-text" id="menuAboutText"></div>
-    </div>
-    <div class="top-menu-section">
-      <div class="top-menu-section-heading" id="menuSectionsTitle"></div>
-      <div class="menu-sections-list" id="menuSectionsList"></div>
-    </div>
-    <div class="top-menu-section">
-      <div class="top-menu-section-heading" id="menuLanguageTitle"></div>
-      <div class="menu-language-switch">
-        <button class="menu-language-btn" id="langRuBtn" type="button" onclick="setLanguage('ru')"></button>
-        <button class="menu-language-btn" id="langDeBtn" type="button" onclick="setLanguage('de')"></button>
-      </div>
+    <button class="menu-about-btn" id="menuAboutBtn" type="button" onclick="showAboutModal()"></button>
+    <div class="menu-chapters-list" id="menuChaptersList"></div>
+    <div class="menu-lang-row">
+      <button class="menu-language-btn" id="langRuBtn" type="button" onclick="setLanguage('ru')"></button>
+      <button class="menu-language-btn" id="langDeBtn" type="button" onclick="setLanguage('de')"></button>
     </div>
   </div>
 </div>
@@ -55,6 +44,15 @@
 <div id="app">
   <div class="card" id="mainCard">
     <div id="screenContent"></div>
+  </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div class="about-modal" id="aboutModal" onclick="closeAboutModal()">
+  <div class="about-modal-box" onclick="event.stopPropagation()">
+    <button class="about-modal-close" type="button" onclick="closeAboutModal()">✕</button>
+    <div class="about-modal-title" id="aboutModalTitle"></div>
+    <div class="about-modal-text" id="aboutModalText"></div>
   </div>
 </div>
 
