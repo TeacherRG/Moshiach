@@ -811,7 +811,9 @@
   }
   .audio-btn:hover { background: var(--night); border-color: var(--gold); transform: translateY(-2px); }
   .audio-btn.playing { background: var(--gold-deep); color: var(--parchment); border-color: var(--gold); }
+  .audio-btn.paused { background: var(--night-mid); color: var(--gold-light); border-color: rgba(201,146,42,0.55); }
   .audio-btn .a-icon { font-size: 0.95rem; }
+  .audio-btn .a-label { font-size: 0.88rem; }
 
   /* MOBILE */
   @media (max-width: 600px) {
@@ -889,8 +891,8 @@
 
 <!-- AUDIO -->
 <div class="audio-bar">
-  <button class="audio-btn" id="audioBtn" onclick="toggleAudio()" title="">
-    <span class="a-icon">🔇</span><span>Атмосфера</span>
+  <button class="audio-btn" id="audioBtn" onclick="toggleNarration()">
+    <span class="a-icon">▶</span><span class="a-label">Слушать</span>
   </button>
 </div>
 
@@ -963,6 +965,11 @@ function renderScreen(index) {
     document.getElementById('mainCard').style.animation = 'fadeIn 0.6s ease forwards';
   }, 10);
   screens[index](content);
+  // Auto-narrate if quest is active
+  if (_narrationActive) {
+    window.speechSynthesis.cancel();
+    setTimeout(() => _startNarration(index), 700);
+  }
 }
 
 function next() {
@@ -1791,35 +1798,128 @@ function toggleGlossary() {
   }, { passive: false });
 })();
 
-// ===== AUDIO SYSTEM =====
+// ===== NARRATION & AMBIENT AUDIO =====
+
+// Russian narration text for each of the 9 screens
+var _narrationTexts = [
+  // 0 — Intro
+  'Ман с Небес. Добро пожаловать в аудиоквест. Три с половиной тысячи лет назад евреи шли через пустыню. Каждое утро с неба спускался ман — небесный хлеб. Но где он появлялся, и в каком виде — зависело от духовного уровня каждого человека. Любавичский Ребе учит: ман — это не просто история. Это зеркало, которое показывает, кто мы сейчас. Последнее поколение изгнания — это первое поколение Избавления. Праведник находил готовый хлеб прямо у входа в шатёр. Средний должен был выйти за лагерь — и находил там лепёшки. Грешник искал далеко в поле, и должен был молоть зерно. Но ман питал и очищал всех евреев — и праведника, и грешника. Нажмите кнопку ниже, чтобы начать путь.',
+
+  // 1 — Day 1
+  'День первый. Утреннее испытание. Рассвет над лагерем. Утренняя молитва вот-вот начнётся. Ты замечаешь: твой сосед по шатру не встаёт. Что ты сделаешь? Первый путь — разбудить его. Каждая еврейская душа — это целый мир. Второй путь — не вмешиваться. Уважение к свободе воли тоже является ценностью. Третий путь — честно признать, что тебе самому трудно встать. Признать свои ограничения — начало пути. Сделай свой выбор.',
+
+  // 2 — Day 2
+  'День второй. Два вида хлеба. Ребе проводит глубокую параллель: ман — это не только еда в пустыне. Это образ двух видов Торы, двух видов духовной пищи. Хлеб с земли — открытая Тора. В ней есть споры и вопросы. Она требует труда, как хлеб, выращенный из земли. Хлеб с Небес — внутренняя Тора, хасидус. В ней нет неразрешённых вопросов. Она спускается сама, для каждой души, без отходов и без остатков. Попробуй распределить карточки по двум категориям.',
+
+  // 3 — Day 3
+  'День третий. Никто не потерян. Некоторые евреи в пустыне несли с собой идола. Казалось бы, они недостойны небесной пищи. Но ман спускался и к ним. И — самое удивительное — не оставлял в них отходов. Ман очистил весь Израиль и сделал их достойными получить Тору. Ребе объясняет: ман не менял грешника мгновенно. Некоторые продолжали молоть даже после многократного вкушения. Но духовная работа шла изнутри. Это как тшува — возвращение к Б-гу. Она не всегда происходит сразу. Но духовная пища продолжает работать внутри человека. Если ман питал даже тех, кто нёс идола — значит ли это, что никто не потерян?',
+
+  // 4 — Day 4
+  'День четвёртый. Моше и небесный хлеб. Ребе приводит неожиданную мысль из книги Тора Ор: Моше провёл сорок дней на горе Синай без еды и питья. Но он всё же питался — духовным маном, как ангелы. Псалмы говорят: хлеб могучих ел человек. Это учит нас: существует шкала. На одном конце — материальное. На другом — духовное. Ман существовал на обоих уровнях одновременно. Даже в физическом мане были облачены духовные светы высочайших уровней. Где на этой шкале сейчас находишься ты?',
+
+  // 5 — Day 5
+  'День пятый. Шабос и ман — связь миров. Ман не спускался в Шабат. Почему? В Шабат происходит подъём всех миров. А во время подъёма невозможно низвести духовное в материальное. Но вот удивительный парадокс: все шесть дней недели получают своё благословение именно от седьмого дня. Шабат сам не получает ман — но именно он даёт жизнь всем остальным дням. Тот, кто поднялся выше получения, становится источником для всех. Попробуй расставить правильное количество порций по дням недели.',
+
+  // 6 — Day 6
+  'День шестой. Тшува через ман. Ман не делал грешников праведниками мгновенно. Хотя они ели ман много раз, всё равно были те, кому нужно было молоть. Но духовная работа шла постепенно. Каждый кусочек мана действовал изнутри, и в конце концов приводил к тшуве. Ребе связывает это с нашим временем. Он цитирует своего тестя: сразу за тшувой — Избавление. И добавляет: уже закончили полировку. Нужно только стоять готовыми встретить Мошиаха. Что в твоей жизни сейчас требует терпения и постепенного труда?',
+
+  // 7 — Shabbat
+  'Святой Шабос. Как будто вышла душа мира от любви к Б-гу. Ты прошёл путь целой недели — от рассвета первого дня до покоя седьмого. Твой ман этой недели — это твоё отражение. Не оценка, а путь. Ни один еврей не был оставлен. Ман был для каждого.',
+
+  // 8 — Final
+  'Последнее поколение изгнания — это первое поколение Избавления. Избавления для всего Израиля во всех поколениях. Ребе призывает: стоять готовыми — все вы — встретить нашего праведного Мошиаха. Что ты можешь сделать сегодня, чтобы приблизить это? Три пути перед тобой. Первый — выучить урок Торы, даже пять минут. Каждая минута учёбы приближает Избавление. Второй — сделать доброе дело: люби ближнего, как самого себя. Третий — рассказать другу о том, что ты узнал сегодня. Распространяй источники мудрости вовне.'
+];
+
+var _narrationActive = false;
 var _audioCtx = null;
 var _audioMaster = null;
-var _audioPlaying = false;
 
-function toggleAudio() {
+function toggleNarration() {
   var btn = document.getElementById('audioBtn');
+  var synth = window.speechSynthesis;
+
+  // Init ambient on first user gesture
   if (!_audioCtx) {
     _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     _buildAmbient();
-    _audioPlaying = true;
   } else {
-    _audioPlaying = !_audioPlaying;
+    _audioCtx.resume();
   }
 
+  if (!_narrationActive) {
+    // START
+    _narrationActive = true;
+    _startNarration(state.day);
+    _setAmbientVol(0.3, 1.5);
+    btn.querySelector('.a-icon').textContent = '⏸';
+    btn.querySelector('.a-label').textContent = 'Пауза';
+    btn.classList.add('playing');
+    btn.classList.remove('paused');
+  } else if (synth.speaking && !synth.paused) {
+    // PAUSE narration, ambient rises
+    synth.pause();
+    _setAmbientVol(0.72, 0.8);
+    btn.querySelector('.a-icon').textContent = '▶';
+    btn.querySelector('.a-label').textContent = 'Продолжить';
+    btn.classList.remove('playing');
+    btn.classList.add('paused');
+  } else if (synth.paused) {
+    // RESUME
+    synth.resume();
+    _setAmbientVol(0.3, 0.8);
+    btn.querySelector('.a-icon').textContent = '⏸';
+    btn.querySelector('.a-label').textContent = 'Пауза';
+    btn.classList.add('playing');
+    btn.classList.remove('paused');
+  } else {
+    // Narration finished — replay current screen
+    _startNarration(state.day);
+    _setAmbientVol(0.3, 1);
+    btn.querySelector('.a-icon').textContent = '⏸';
+    btn.querySelector('.a-label').textContent = 'Пауза';
+    btn.classList.add('playing');
+    btn.classList.remove('paused');
+  }
+}
+
+function _startNarration(index) {
+  var synth = window.speechSynthesis;
+  synth.cancel();
+  var text = _narrationTexts[index];
+  if (!text) return;
+
+  var utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'ru-RU';
+  utter.rate = 0.88;
+  utter.pitch = 1.0;
+  utter.volume = 1.0;
+
+  // Prefer online Russian voice for quality
+  var voices = synth.getVoices();
+  var ruVoice = voices.find(function(v) { return v.lang === 'ru-RU' && !v.localService; }) ||
+                voices.find(function(v) { return v.lang === 'ru-RU'; }) ||
+                voices.find(function(v) { return v.lang.startsWith('ru'); });
+  if (ruVoice) utter.voice = ruVoice;
+
+  utter.onend = function() {
+    var b = document.getElementById('audioBtn');
+    if (!b) return;
+    _narrationActive = false;
+    _setAmbientVol(0.7, 2);
+    b.querySelector('.a-icon').textContent = '▶';
+    b.querySelector('.a-label').textContent = 'Слушать снова';
+    b.classList.remove('playing', 'paused');
+  };
+
+  synth.speak(utter);
+}
+
+function _setAmbientVol(target, duration) {
+  if (!_audioMaster || !_audioCtx) return;
   var now = _audioCtx.currentTime;
   _audioMaster.gain.cancelScheduledValues(now);
   _audioMaster.gain.setValueAtTime(_audioMaster.gain.value, now);
-
-  if (_audioPlaying) {
-    _audioCtx.resume();
-    _audioMaster.gain.linearRampToValueAtTime(1, now + 2.5);
-    btn.querySelector('.a-icon').textContent = '🔊';
-    btn.classList.add('playing');
-  } else {
-    _audioMaster.gain.linearRampToValueAtTime(0, now + 1.8);
-    btn.querySelector('.a-icon').textContent = '🔇';
-    btn.classList.remove('playing');
-  }
+  _audioMaster.gain.linearRampToValueAtTime(target, now + duration);
 }
 
 function _buildAmbient() {
@@ -1833,17 +1933,14 @@ function _buildAmbient() {
   comp.connect(_audioMaster);
   _audioMaster.connect(ctx.destination);
 
-  // Drone — A minor chord: A2 E3 A3 E4 with micro-detuning
-  [[110, 0.055], [165, 0.038], [220, 0.028], [330, 0.014], [440, 0.008]].forEach(function (pair) {
+  // Soft A-minor drone with micro-detuning + tremolo
+  [[110, 0.055], [165, 0.038], [220, 0.028], [330, 0.014], [440, 0.008]].forEach(function(pair) {
     var freq = pair[0], amp = pair[1];
     var osc = ctx.createOscillator();
     var g = ctx.createGain();
-    // Micro-detune each oscillator for natural beating
     osc.frequency.setValueAtTime(freq * (1 + (Math.random() - 0.5) * 0.003), ctx.currentTime);
     osc.type = 'sine';
     g.gain.setValueAtTime(amp, ctx.currentTime);
-
-    // Slow LFO tremolo
     var lfo = ctx.createOscillator();
     var lfoG = ctx.createGain();
     lfo.frequency.setValueAtTime(0.08 + Math.random() * 0.18, ctx.currentTime);
@@ -1851,71 +1948,52 @@ function _buildAmbient() {
     lfo.connect(lfoG);
     lfoG.connect(g.gain);
     lfo.start();
-
     osc.connect(g);
     g.connect(comp);
     osc.start();
   });
 
-  // Desert wind: filtered white noise
+  // Desert wind (bandpass noise)
   var bufLen = ctx.sampleRate * 3;
   var noiseBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
   var nd = noiseBuf.getChannelData(0);
   for (var i = 0; i < bufLen; i++) nd[i] = Math.random() * 2 - 1;
-
   var noiseSrc = ctx.createBufferSource();
   noiseSrc.buffer = noiseBuf;
   noiseSrc.loop = true;
-
   var windFilt = ctx.createBiquadFilter();
   windFilt.type = 'bandpass';
   windFilt.frequency.setValueAtTime(380, ctx.currentTime);
   windFilt.Q.setValueAtTime(0.45, ctx.currentTime);
-
   var windG = ctx.createGain();
-  windG.gain.setValueAtTime(0.038, ctx.currentTime);
-
-  // Slow wind swell LFO
-  var wLfo = ctx.createOscillator();
-  var wLfoG = ctx.createGain();
-  wLfo.frequency.setValueAtTime(0.04, ctx.currentTime);
-  wLfoG.gain.setValueAtTime(0.022, ctx.currentTime);
-  wLfo.connect(wLfoG);
-  wLfoG.connect(windG.gain);
-  wLfo.start();
-
+  windG.gain.setValueAtTime(0.036, ctx.currentTime);
   noiseSrc.connect(windFilt);
   windFilt.connect(windG);
   windG.connect(comp);
   noiseSrc.start();
 
-  // Schedule occasional soft bell tones
   _scheduleBell();
 }
 
 function _scheduleBell() {
-  var delay = 10000 + Math.random() * 22000;
-  setTimeout(function () {
+  setTimeout(function() {
     if (!_audioCtx || !_audioMaster) return;
-    if (_audioPlaying) {
-      var ctx = _audioCtx;
-      var bellFreqs = [528, 660, 792, 880, 1056];
-      var freq = bellFreqs[Math.floor(Math.random() * bellFreqs.length)];
-      var osc = ctx.createOscillator();
-      var env = ctx.createGain();
-      var now = ctx.currentTime;
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-      env.gain.setValueAtTime(0, now);
-      env.gain.linearRampToValueAtTime(0.06, now + 0.015);
-      env.gain.exponentialRampToValueAtTime(0.0001, now + 4);
-      osc.connect(env);
-      env.connect(_audioMaster);
-      osc.start(now);
-      osc.stop(now + 4.5);
-    }
+    var ctx = _audioCtx;
+    var freq = [528, 660, 792, 880][Math.floor(Math.random() * 4)];
+    var osc = ctx.createOscillator();
+    var env = ctx.createGain();
+    var now = ctx.currentTime;
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, now);
+    env.gain.setValueAtTime(0, now);
+    env.gain.linearRampToValueAtTime(0.05, now + 0.015);
+    env.gain.exponentialRampToValueAtTime(0.0001, now + 4);
+    osc.connect(env);
+    env.connect(_audioMaster);
+    osc.start(now);
+    osc.stop(now + 4.5);
     _scheduleBell();
-  }, delay);
+  }, 12000 + Math.random() * 26000);
 }
 
 // ===== START =====
