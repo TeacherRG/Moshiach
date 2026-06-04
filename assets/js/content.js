@@ -466,6 +466,7 @@
             title: 'Математика Меноры',
             quote: '«Ибо Мне не нужен свет — вы осветите мир для Меня»',
             quoteSource: 'Раши. Бамидбар 8:2 — Б-г не нуждается в свете Меноры; это для нас',
+            quote2: '«Как образ, который показал Г-сподь Моше, — так сделал он менору»',
             body1: 'Конструкция Меноры полна числовых тайн. Нажми на каждое число, чтобы раскрыть его секрет!',
             reveals: [
               { number: '18', he: 'חַי', title: 'Высота Меноры — 18 ладоней', text: 'חי (хай) = 18 = жизнь. Менора высотой в «жизнь» освещает жизнь! (Рамбам, hилхот Бейт hа-Бхира)' },
@@ -997,6 +998,7 @@
             title: 'Mathematik der Menora',
             quote: '„Ich brauche das Licht nicht — ihr sollt die Welt für Mich erleuchten”',
             quoteSource: 'Raschi. Bamidbar 8:2',
+            quote2: '„Wie das Bild, das der Ewige Mosche gezeigt hatte — so machte er die Menora”',
             body1: 'Der Aufbau der Menora ist voller verborgener Zahlen. Drücke auf jede Zahl, um ihr Geheimnis zu enthüllen!',
             reveals: [
               { number: '18', he: 'חַי', title: 'Höhe der Menora — 18 Handbreiten', text: 'חי (Chai) = 18 = Leben. Die Menora in der Höhe des „Lebens” erleuchtet das Leben! (Rambam, Hil. Beit ha-Bechira)' },
