@@ -70,6 +70,125 @@
     padding: 20px;
   }
 
+  .top-menu {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 120;
+  }
+  .menu-toggle-btn {
+    width: 52px;
+    height: 52px;
+    border: 1px solid rgba(201,146,42,0.45);
+    border-radius: 16px;
+    background: rgba(26,37,53,0.88);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    padding: 0 13px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+  .menu-toggle-btn:hover,
+  .menu-toggle-btn.open {
+    transform: translateY(-2px);
+    border-color: var(--gold);
+    background: rgba(36,49,69,0.95);
+  }
+  .menu-toggle-btn span {
+    display: block;
+    height: 2px;
+    background: var(--white);
+    border-radius: 999px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .menu-toggle-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-toggle-btn.open span:nth-child(2) { opacity: 0; }
+  .menu-toggle-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .top-menu-panel {
+    width: min(360px, calc(100vw - 40px));
+    margin-top: 12px;
+    padding: 20px;
+    border-radius: 24px;
+    background: rgba(250,243,224,0.96);
+    border: 1px solid rgba(201,146,42,0.35);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.28);
+    transform: translateY(-8px) scale(0.98);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  }
+  .top-menu-panel.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+  .top-menu-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  .top-menu-subtitle {
+    margin-top: 4px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .top-menu-about,
+  .top-menu-section {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(184,168,120,0.45);
+  }
+  .top-menu-section-heading {
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 12px;
+  }
+  .top-menu-about-text {
+    line-height: 1.65;
+    color: var(--text-mid);
+  }
+  .menu-sections-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .menu-section-link,
+  .menu-language-btn,
+  .btn-inline {
+    border: 1px solid rgba(201,146,42,0.45);
+    background: rgba(255,255,255,0.75);
+    color: var(--text-dark);
+    border-radius: 14px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+  }
+  .menu-section-link:hover,
+  .menu-language-btn:hover,
+  .btn-inline:hover,
+  .menu-section-link.active,
+  .menu-language-btn.active {
+    background: rgba(201,146,42,0.18);
+    border-color: var(--gold);
+    color: var(--gold-deep);
+  }
+  .menu-language-switch {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
   /* PARCHMENT CARD */
   .card {
     background: var(--parchment);
@@ -210,6 +329,104 @@
     font-family: 'Noto Serif Hebrew', serif;
     color: var(--gold-deep);
     font-weight: 700;
+  }
+
+  .dual-bread-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .dual-bread-card {
+    border-radius: 16px;
+    padding: 18px 16px;
+    text-align: center;
+    border: 1px solid var(--gold);
+    background: rgba(201,146,42,0.08);
+  }
+  .dual-bread-card.heaven {
+    border-color: var(--sky);
+    background: rgba(107,154,184,0.08);
+  }
+  .dual-bread-he {
+    font-family: 'Noto Serif Hebrew', serif;
+    font-size: 1.3rem;
+    color: var(--gold-deep);
+    margin-bottom: 8px;
+  }
+  .dual-bread-card.heaven .dual-bread-he { color: #3d6b8a; }
+  .dual-bread-title {
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    font-style: italic;
+  }
+  .dual-bread-mini-he {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    font-family: 'Noto Serif Hebrew', serif;
+  }
+  .dual-bread-body {
+    font-size: 0.84rem;
+    color: var(--text-mid);
+    margin-top: 6px;
+  }
+
+  .reflection-question {
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--text-mid);
+    text-align: center;
+    margin: 12px 0;
+    direction: ltr;
+    line-height: 1.6;
+  }
+  .scale-label-copy {
+    text-align: center;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--text-mid);
+    margin-top: 8px;
+  }
+  .feedback-error {
+    text-align: center;
+    color: var(--red-accent);
+    font-size: 0.9rem;
+    padding: 12px 16px;
+    background: rgba(139,32,32,0.06);
+    border-radius: 4px;
+    border: 1px solid rgba(139,32,32,0.15);
+  }
+  .final-prompt {
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 720px) {
+    .card {
+      padding: 42px 22px;
+    }
+    .top-menu {
+      top: 14px;
+      right: 14px;
+    }
+    .audio-bar {
+      left: 14px;
+      bottom: 14px;
+    }
+    .dual-bread-grid,
+    .sort-container,
+    .menu-sections-list,
+    .menu-language-switch {
+      grid-template-columns: 1fr;
+    }
+    .week-map {
+      flex-wrap: wrap;
+    }
+    .week-day {
+      min-width: 80px;
+      flex: 0 0 calc(33.333% - 8px);
+    }
     font-size: 1.05em;
     cursor: help;
     border-bottom: 1px dotted var(--gold);
@@ -811,6 +1028,29 @@
     text-align: center;
     margin: 4px 0 8px;
     direction: ltr;
+  }
+  .project-about {
+    margin: 0 0 20px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(201,146,42,0.12), rgba(107,154,184,0.08));
+    border: 1px solid rgba(201,146,42,0.24);
+  }
+  .project-about-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(139,98,20,0.12);
+    color: var(--gold-deep);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .project-about-text {
+    color: var(--text-mid);
+    line-height: 1.75;
   }
   .motto-heb {
     font-family: 'Noto Serif Hebrew', serif;
