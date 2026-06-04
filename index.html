@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +12,32 @@
 <!-- BACKGROUND -->
 <div class="stars" id="stars"></div>
 <div class="desert-bg"></div>
+
+<!-- MENU -->
+<div class="top-menu">
+  <button class="menu-toggle-btn" id="menuToggleBtn" type="button" aria-label="Открыть меню">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="top-menu-panel" id="topMenuPanel">
+    <div class="top-menu-title" id="menuTitle"></div>
+    <div class="top-menu-subtitle" id="menuSubtitle"></div>
+    <div class="top-menu-about">
+      <div class="top-menu-section-heading" id="menuAboutTitle"></div>
+      <div class="top-menu-about-text" id="menuAboutText"></div>
+    </div>
+    <div class="top-menu-section">
+      <div class="top-menu-section-heading" id="menuSectionsTitle"></div>
+      <div class="menu-sections-list" id="menuSectionsList"></div>
+    </div>
+    <div class="top-menu-section">
+      <div class="top-menu-section-heading" id="menuLanguageTitle"></div>
+      <div class="menu-language-switch">
+        <button class="menu-language-btn" id="langRuBtn" type="button" onclick="setLanguage('ru')"></button>
+        <button class="menu-language-btn" id="langDeBtn" type="button" onclick="setLanguage('de')"></button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- AUDIO -->
 <div class="audio-bar">
@@ -32,6 +58,7 @@
   </div>
 </div>
 
+<script src="assets/js/content.js"></script>
 <script src="assets/js/audio.js"></script>
 <script src="assets/js/app.js"></script>
 </body>

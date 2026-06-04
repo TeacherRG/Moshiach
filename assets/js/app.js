@@ -1,15 +1,16 @@
-// ===== STATE =====
+const CONTENT = window.MoshiachContent;
+
 const state = {
   day: 0,
-  soulLevel: 3, // 1=raша, 2=beinoni, 3=tsadik (out of 5 scale)
+  soulLevel: 3,
   choices: [],
   journalEntries: [],
   sortScore: 0,
-  scaleValue: 50
+  scaleValue: 50,
+  lang: localStorage.getItem('moshiach-lang') || 'ru'
 };
 window.state = state;
 
-// ===== SCREENS =====
 const screens = [
   renderHome,
   renderIntro,
@@ -23,48 +24,95 @@ const screens = [
   renderFinal
 ];
 
-// ===== INIT =====
+function tr() {
+  return CONTENT.translations[state.lang];
+}
+
+function src() {
+  return CONTENT.source;
+}
+
+function screenText(key) {
+  return tr().screens[key];
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function interpolate(text, vars) {
+  return text.replace(/\{(\w+)\}/g, (_, key) => vars[key] != null ? vars[key] : '');
+}
+
+function setLanguage(lang) {
+  if (!CONTENT.translations[lang]) return;
+  state.lang = lang;
+  localStorage.setItem('moshiach-lang', lang);
+  document.documentElement.lang = tr().meta.htmlLang;
+  document.title = tr().meta.title;
+  renderMenu();
+  renderScreen(state.day, { skipMenu: true });
+  if (window.AudioQuest && typeof window.AudioQuest.refreshLabels === 'function') {
+    window.AudioQuest.refreshLabels();
+  }
+}
+window.setLanguage = setLanguage;
+
+function next() {
+  if (state.day < screens.length - 1) renderScreen(state.day + 1);
+}
+window.next = next;
+
+function renderScreen(index, options = {}) {
+  state.day = index;
+  const content = document.getElementById('screenContent');
+  content.innerHTML = '';
+  const card = document.getElementById('mainCard');
+  card.style.animation = 'none';
+  setTimeout(() => {
+    card.style.animation = 'fadeIn 0.6s ease forwards';
+  }, 10);
+  screens[index](content);
+  if (!options.skipMenu) renderMenu();
+  if (window.AudioQuest) window.AudioQuest.onScreenChange(index);
+}
+window.renderScreen = renderScreen;
+
 function init() {
+  document.documentElement.lang = tr().meta.htmlLang;
+  document.title = tr().meta.title;
   createStars();
-  renderScreen(0);
+  bindMenuEvents();
+  renderMenu();
+  renderScreen(0, { skipMenu: true });
+  if (window.AudioQuest && typeof window.AudioQuest.refreshLabels === 'function') {
+    window.AudioQuest.refreshLabels();
+  }
 }
 
 function createStars() {
   const container = document.getElementById('stars');
+  container.innerHTML = '';
   for (let i = 0; i < 80; i++) {
     const s = document.createElement('div');
     s.className = 'star';
     const size = Math.random() * 2.5 + 0.5;
     s.style.cssText = `
       width:${size}px; height:${size}px;
-      left:${Math.random()*100}%;
-      top:${Math.random()*70}%;
-      --duration:${2+Math.random()*4}s;
-      --delay:${Math.random()*4}s;
+      left:${Math.random() * 100}%;
+      top:${Math.random() * 70}%;
+      --duration:${2 + Math.random() * 4}s;
+      --delay:${Math.random() * 4}s;
     `;
     container.appendChild(s);
   }
 }
 
-function renderScreen(index) {
-  state.day = index;
-  const content = document.getElementById('screenContent');
-  content.innerHTML = '';
-  document.getElementById('mainCard').style.animation = 'none';
-  setTimeout(() => {
-    document.getElementById('mainCard').style.animation = 'fadeIn 0.6s ease forwards';
-  }, 10);
-  screens[index](content);
-  if (window.AudioQuest) AudioQuest.onScreenChange(index);
-}
-
-function next() {
-  if (state.day < screens.length - 1) {
-    renderScreen(state.day + 1);
-  }
-}
-
-// ===== HELPERS =====
 function progressBar(current, total) {
   const pct = Math.round((current / total) * 100);
   return `<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>`;
@@ -81,11 +129,21 @@ function dayDots(current) {
 }
 
 function divider() {
-  return `<div class="divider"><div class="divider-line"></div><span class="divider-star">✦</span><div class="divider-line"></div></div>`;
+  return '<div class="divider"><div class="divider-line"></div><span class="divider-star">✦</span><div class="divider-line"></div></div>';
 }
 
 function footerCredit() {
-  return `<div class="footer-credit">По сихе <span>רבי מנחם מנדל שניאורסון זי"ע</span> · Беаалотха, 19 Сивана 5751 · Ликутей Сихот, том 39</div>`;
+  const common = tr().common;
+  const commonSrc = src().common;
+  return `<div class="footer-credit">${common.footerLead} <span>${commonSrc.footerHe}</span> · ${common.footerRef}</div>`;
+}
+
+function glossaryItem(sourceLabel, item) {
+  return {
+    term: `${sourceLabel} · ${item.label}`,
+    def: item.def,
+    ref: item.ref || ''
+  };
 }
 
 function chapterGlossary(items) {
@@ -96,24 +154,22 @@ function chapterGlossary(items) {
       ${item.ref ? `<div class="glossary-ref">${item.ref}</div>` : ''}
     </div>`).join('');
   return `
-  <div class="chapter-glossary">
-    <button class="chapter-glossary-btn" onclick="this.parentElement.classList.toggle('open')">
-      מִלּוֹן · Глоссарий главы ▾
-    </button>
-    <div class="chapter-glossary-panel">
-      ${itemsHtml}
-    </div>
-  </div>`;
+    <div class="chapter-glossary">
+      <button class="chapter-glossary-btn" onclick="this.parentElement.classList.toggle('open')">
+        ${src().common.glossaryToggleHe} · ${tr().common.glossaryToggle} ▾
+      </button>
+      <div class="chapter-glossary-panel">${itemsHtml}</div>
+    </div>`;
 }
 
 function mannaScene(tentPos, label) {
   return `
-  <div class="manna-scene" id="mannaScene">
-    <div class="scene-sky"></div>
-    <div class="scene-ground"></div>
-    <div class="tent" style="left:${tentPos}%" id="tentEl">⛺</div>
-    <div class="scene-label">${label}</div>
-  </div>`;
+    <div class="manna-scene" id="mannaScene">
+      <div class="scene-sky"></div>
+      <div class="scene-ground"></div>
+      <div class="tent" style="left:${tentPos}%" id="tentEl">⛺</div>
+      <div class="scene-label">${label}</div>
+    </div>`;
 }
 
 function spawnManna(count, xRange) {
@@ -125,10 +181,10 @@ function spawnManna(count, xRange) {
         const p = document.createElement('div');
         p.className = 'manna-particle';
         p.style.cssText = `
-          left:${xRange[0] + Math.random()*(xRange[1]-xRange[0])}%;
+          left:${xRange[0] + Math.random() * (xRange[1] - xRange[0])}%;
           top:5%;
-          --fall-dist:${50+Math.random()*60}px;
-          animation-delay:${Math.random()*0.5}s;
+          --fall-dist:${50 + Math.random() * 60}px;
+          animation-delay:${Math.random() * 0.5}s;
         `;
         scene.appendChild(p);
       }, i * 120);
@@ -136,817 +192,603 @@ function spawnManna(count, xRange) {
   }, 500);
 }
 
-// ===== SCREEN 0: HOME =====
+function renderMenu() {
+  const common = tr().common;
+  const sections = tr().sections;
+  const button = document.getElementById('menuToggleBtn');
+  const panel = document.getElementById('topMenuPanel');
+  const title = document.getElementById('menuTitle');
+  const subtitle = document.getElementById('menuSubtitle');
+  const aboutTitle = document.getElementById('menuAboutTitle');
+  const aboutText = document.getElementById('menuAboutText');
+  const sectionsTitle = document.getElementById('menuSectionsTitle');
+  const languageTitle = document.getElementById('menuLanguageTitle');
+  const sectionsList = document.getElementById('menuSectionsList');
+  const ruBtn = document.getElementById('langRuBtn');
+  const deBtn = document.getElementById('langDeBtn');
+
+  button.setAttribute('aria-label', panel.classList.contains('open') ? common.menuClose : common.menuOpen);
+  title.textContent = common.menuTitle;
+  subtitle.textContent = common.menuSubtitle;
+  aboutTitle.textContent = common.menuAboutTitle;
+  aboutText.textContent = common.menuAboutText;
+  sectionsTitle.textContent = common.menuSectionsTitle;
+  languageTitle.textContent = common.languageTitle;
+  ruBtn.textContent = common.languageRu;
+  deBtn.textContent = common.languageDe;
+  ruBtn.classList.toggle('active', state.lang === 'ru');
+  deBtn.classList.toggle('active', state.lang === 'de');
+
+  sectionsList.innerHTML = sections.map((label, index) => {
+    const target = index === 1 ? 'about' : index > 1 ? index - 1 : 0;
+    const active = (index === 0 && state.day === 0) || (index > 1 && state.day === index - 1) ? 'active' : '';
+    return `<button class="menu-section-link ${active}" onclick="menuNavigate(${target})">${label}</button>`;
+  }).join('');
+}
+
+function bindMenuEvents() {
+  const button = document.getElementById('menuToggleBtn');
+  const panel = document.getElementById('topMenuPanel');
+  button.addEventListener('click', () => {
+    panel.classList.toggle('open');
+    button.classList.toggle('open', panel.classList.contains('open'));
+    renderMenu();
+  });
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.top-menu')) {
+      panel.classList.remove('open');
+      button.classList.remove('open');
+      renderMenu();
+    }
+  });
+}
+
+function menuNavigate(target) {
+  const panel = document.getElementById('topMenuPanel');
+  const button = document.getElementById('menuToggleBtn');
+  panel.classList.remove('open');
+  button.classList.remove('open');
+  if (target === 'about') {
+    if (state.day !== 0) {
+      renderScreen(0);
+      setTimeout(() => {
+        document.getElementById('projectAbout')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 120);
+    } else {
+      document.getElementById('projectAbout')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return;
+  }
+  renderScreen(target);
+}
+window.menuNavigate = menuNavigate;
+
+function termSpan(he, label, def) {
+  return `<span class="term" data-tip-heb="${escapeHtml(he)} · ${escapeHtml(label)}" data-tip="${escapeHtml(def)}">${he}</span>`;
+}
+
+function quoteBlock(he, localized, sourceText) {
+  return `
+    <div class="quote-block">
+      <div class="quote-hebrew">${he}</div>
+      <div class="quote-russian">${localized}</div>
+      <div class="quote-source">${sourceText}</div>
+    </div>`;
+}
+
 function renderHome(el) {
+  const s = screenText('home');
+  const hs = src().home;
   el.innerHTML = `
-    <div class="home-eyebrow">הָעִיקָּר הַשְּׁנֵים עָשָׂר · 12-й принцип веры</div>
-
-    <div class="hebrew-title">אֲנִי מַאֲמִין בֶּאֱמוּנָה שְׁלֵמָה</div>
-    <div class="russian-subtitle">Верю полной верой в приход Мошиаха</div>
-    <div class="rebbe-credit">אֲנִי מַאֲמִין בֶּאֱמוּנָה שְׁלֵמָה בְּבִיאַת הַמָּשִׁיחַ</div>
-
+    <div class="home-eyebrow">${hs.eyebrowHe} · ${s.eyebrow}</div>
+    <div class="hebrew-title">${hs.titleHe}</div>
+    <div class="russian-subtitle">${s.subtitle}</div>
+    <div class="rebbe-credit">${hs.rebbeHe}</div>
     ${divider()}
-
     <div class="motto-block">
-      <div class="motto-heb">מִצְוָה גְּדוֹלָה לִהְיוֹת בְּשִׂמְחָה תָּמִיד</div>
-      <div class="motto-rus">«Велика заповедь быть в радости всегда»</div>
+      <div class="motto-heb">${hs.mottoHe}</div>
+      <div class="motto-rus">${s.motto}</div>
     </div>
-
     ${divider()}
-
-    <div class="chapters-label">Главы · פָּרָשִׁיּוֹת</div>
-
+    <div class="project-about" id="projectAbout">
+      <div class="project-about-badge">${tr().common.aboutBadge}</div>
+      <div class="project-about-text">${tr().common.menuAboutText}</div>
+    </div>
+    <div class="chapters-label">${s.chaptersLabel} · פָּרָשִׁיּוֹת</div>
     <div class="chapter-list">
       <div class="chapter-card" onclick="renderScreen(1)">
-        <div class="chapter-card-heb">בְּהַעֲלֹתְךָ</div>
-        <div class="chapter-card-rus">Беалотха</div>
-        <div class="chapter-card-desc">Ман с Небес — интерактивный путь сквозь пустыню. По сихе Любавичского Ребе, 19 Сивана 5751.</div>
+        <div class="chapter-card-heb">${hs.chapterHe}</div>
+        <div class="chapter-card-rus">${s.chapterTitle}</div>
+        <div class="chapter-card-desc">${s.chapterDescription}</div>
         <div class="chapter-card-footer">
-          <span class="chapter-card-meta">7 дней · Ликутей Сихот, т. 39</span>
-          <span class="chapter-card-enter">Войти →</span>
+          <span class="chapter-card-meta">${s.chapterMeta}</span>
+          <span class="chapter-card-enter">${s.enter}</span>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-// ===== SCREEN 1: INTRO =====
 function renderIntro(el) {
+  const s = screenText('intro');
+  const hs = src().intro;
   el.innerHTML = `
-    <div class="hebrew-title">מָן מִן הַשָּׁמַיִם</div>
-    <div class="russian-subtitle">Ман с Небес — интерактивная игра</div>
-    <div class="rebbe-credit">על פי שיחת כ"ק אדמו"ר מליובאוויטש זי"ע · בהעלתך, י"ט סיון תשנ"א</div>
-
+    <div class="hebrew-title">${hs.titleHe}</div>
+    <div class="russian-subtitle">${s.subtitle}</div>
+    <div class="rebbe-credit">${hs.rebbeHe}</div>
     ${divider()}
-
-    <div class="quote-block">
-      <div class="quote-hebrew">הַדּוֹר הָאַחֲרוֹן שֶׁל הַגָּלוּת הוּא הַדּוֹר הָרִאשׁוֹן שֶׁל הַגְּאוּלָה</div>
-      <div class="quote-russian">«Последнее поколение изгнания — это первое поколение Избавления»</div>
-      <div class="quote-source">Любавичский Ребе, Беаалотха 5751</div>
-    </div>
-
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
     <div class="body-text">
-      Три с половиной тысячи лет назад евреи шли через пустыню. Каждое утро с неба спускался ман — небесный хлеб. Но <strong>где</strong> он появлялся и <strong>в каком виде</strong> — зависело от духовного уровня каждого человека.<br><br>
-      Любавичский Ребе <span class="term" data-tip-heb="רבי מנחם מנדל שניאורסון" data-tip="Любавичский Ребе — глава движения Хабад-Любавич (1951–1994). Дал тысячи сихот, раскрывших глубины хасидского учения.">רבי מנחם מנדל שניאורסון</span> учит: ман — это не просто история. Это зеркало, которое показывает, кто мы сейчас.
+      ${s.body1}<br><br>
+      ${s.body2Lead} ${termSpan('רבי מנחם מנדל שניאורסון', s.body2Lead, s.body2Term)}${s.body2Rest}
     </div>
-
     ${divider()}
-
     <table class="souls-table">
-      <thead><tr><th>Тип души</th><th>Иврит</th><th>Где ман</th><th>В каком виде</th></tr></thead>
+      <thead><tr>${s.tableHead.map(head => `<th>${head}</th>`).join('')}</tr></thead>
       <tbody>
-        <tr><td>Праведник</td><td class="heb">צַדִּיק</td><td>У входа в шатёр</td><td>Готовый хлеб 🍞</td></tr>
-        <tr><td>Средний</td><td class="heb">בֵּינוֹנִי</td><td>За пределами лагеря</td><td>Лепёшки 🫓</td></tr>
-        <tr><td>Грешник</td><td class="heb">רָשָׁע</td><td>Далеко в поле</td><td>Зерно для помола 🌾</td></tr>
+        ${s.tableRows.map(row => `<tr><td>${row[0]}</td><td class="heb">${row[1]}</td><td>${row[2]}</td><td>${row[3]}</td></tr>`).join('')}
       </tbody>
     </table>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">אֲבָל הַמָּן זִיכֵּךְ אֶת כָּל יִשְׂרָאֵל — לְצַדִּיק וּלְרָשָׁע</div>
-      <div class="quote-russian">«Но ман питал и очищал всех евреев — и праведника, и грешника»</div>
-      <div class="quote-source">Ребе, на основе Йома 75а</div>
-    </div>
-
-    <button class="btn-primary" onclick="next()">Выйти из шатра ←</button>
-
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
+    <button class="btn-primary" onclick="next()">${s.next}</button>
     ${chapterGlossary([
-      { term: 'מָן · Ман', def: 'Небесная пища, ниспосланная евреям в пустыне. В сихе Ребе — символ духовной пищи для каждого еврея.' },
-      { term: 'צַדִּיק · Цадик', def: 'Праведник. Ман спускался к нему у входа в шатёр в виде готового хлеба.', ref: 'Йома 75а' },
-      { term: 'בֵּינוֹנִי · Бейнони', def: '«Средний» — тот, чьи добрые дела и грехи уравновешены. Должен был выходить за лагерь.', ref: 'Тания, гл. 12' },
-      { term: 'רָשָׁע · Раша', def: 'Грешник. Искал ман далеко в поле и должен был молоть. Но ман всё равно питал его.' },
-      { term: 'גְּאוּלָה · Геула', def: 'Избавление, приход Мошиаха. Ребе: «Последнее поколение изгнания — первое поколение Геулы».' }
+      glossaryItem('מָן', s.glossary[0]),
+      glossaryItem('צַדִּיק', s.glossary[1]),
+      glossaryItem('בֵּינוֹנִי', s.glossary[2]),
+      glossaryItem('רָשָׁע', s.glossary[3]),
+      glossaryItem('גְּאוּלָה', s.glossary[4])
     ])}
-
-    ${footerCredit()}
-  `;
+    ${footerCredit()}`;
 }
 
-// ===== SCREEN 1: DAY 1 — CHOICE =====
 function renderDay1(el) {
+  const s = screenText('day1');
+  const hs = src().day1;
   el.innerHTML = `
-    ${progressBar(1,7)}
+    ${progressBar(1, 7)}
     ${dayDots(1)}
-    <div class="scene-title">День первый · יוֹם רִאשׁוֹן</div>
-    <div class="day-title">Утреннее испытание</div>
-
-    ${mannaScene(15, 'Рассвет над лагерем')}
-
-    <div class="quote-block">
-      <div class="quote-hebrew">וַיְהִי בָעֶרֶב וַתַּעַל הַשְּׂלָו</div>
-      <div class="quote-russian">«И было вечером — поднялись перепела» (Шмот 16:13)</div>
-      <div class="quote-source">Начало недели мана в пустыне</div>
-    </div>
-
-    <div class="body-text">Рассвет. <span class="term" data-tip-heb="תְּפִלַּת שַׁחֲרִית · Тфилат Шахарит" data-tip="Утренняя молитва в иудаизме. Один из трёх ежедневных молитвенных порядков, читается на рассвете.">תְּפִלַּת שַׁחֲרִית</span> (утренняя молитва) вот-вот начнётся. Ты замечаешь: твой сосед по шатру не встаёт...</div>
-
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    ${mannaScene(15, s.sceneLabel)}
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text">${s.bodyBefore}${termSpan(hs.termHe, s.termLabel, s.termDef)}${s.bodyAfter}</div>
     <div class="choices" id="choices1">
-      <button class="choice-btn" onclick="makeChoice1(0)">🤝 Разбужу его — каждый еврей важен</button>
-      <button class="choice-btn" onclick="makeChoice1(1)">🤷 Это его выбор, я не вмешиваюсь</button>
-      <button class="choice-btn" onclick="makeChoice1(2)">😴 Мне самому бы встать вовремя</button>
+      ${s.choices.map((choice, idx) => `<button class="choice-btn" onclick="makeChoice1(${idx})">${choice}</button>`).join('')}
     </div>
-
     <div id="feedback1" class="hidden"></div>
-    <div id="btn1" class="hidden">
-      <button class="btn-primary" onclick="next()">Следующий день →</button>
-    </div>
-
+    <div id="btn1" class="hidden"><button class="btn-primary" onclick="next()">${s.next}</button></div>
     ${chapterGlossary([
-      { term: 'צַדִּיק · Цадик', def: 'Праведник. Ман спускался к нему у входа в шатёр в виде готового хлеба.', ref: 'Йома 75а' },
-      { term: 'בֵּינוֹנִי · Бейнони', def: '«Средний» — тот, чьи добрые дела и грехи уравновешены. Должен был выходить за лагерь.', ref: 'Тания, гл. 12' },
-      { term: 'רָשָׁע · Раша', def: 'Грешник. Искал ман далеко в поле и должен был молоть. Но ман всё равно питал его.' }
+      glossaryItem('צַדִּיק', s.glossary[0]),
+      glossaryItem('בֵּינוֹנִי', s.glossary[1]),
+      glossaryItem('רָשָׁע', s.glossary[2])
     ])}
-
-    ${footerCredit()}
-  `;
+    ${footerCredit()}`;
   spawnManna(5, [0, 20]);
 }
 
 function makeChoice1(idx) {
+  const s = screenText('day1');
+  const hs = src().day1;
   const btns = document.querySelectorAll('#choices1 .choice-btn');
   btns.forEach(b => b.disabled = true);
   btns[idx].classList.add('selected');
-
   const feedbacks = [
-    { heb: 'כָּל נִשְׁמָה הִיא עוֹלָם מָלֵא', ru: '«Каждая душа — это целый мир»', note: 'Ребе. Тот, кто помогает другому изучать Тору — как будто даёт ему жизнь.', delta: +1 },
-    { heb: 'כָּל יִשְׂרָאֵל עֲרֵבִים זֶה בָּזֶה', ru: '«Весь Израиль ответственен друг за друга» (Швуот 39а)', note: 'Нейтральный выбор. Уважение к свободе воли — тоже ценность.', delta: 0 },
-    { heb: 'עֲבוֹד אֶת ה\' אֱלֹקֶיךָ', ru: '«Служи Г-споду, Б-гу твоему» — честность с собой тоже важна.', note: 'Признать свои ограничения — начало пути.', delta: 0 }
+    { heb: 'כָּל נִשְׁמָה הִיא עוֹלָם מָלֵא', ru: s.feedback[0].quote, note: s.feedback[0].note, delta: 1 },
+    { heb: 'כָּל יִשְׂרָאֵל עֲרֵבִים זֶה בָּזֶה', ru: s.feedback[1].quote, note: s.feedback[1].note, delta: 0 },
+    { heb: 'עֲבוֹד אֶת ה\' אֱלֹקֶיךָ', ru: s.feedback[2].quote, note: s.feedback[2].note, delta: 0 }
   ];
-
   const f = feedbacks[idx];
   state.soulLevel = Math.min(5, Math.max(1, state.soulLevel + f.delta));
   state.choices.push(idx);
-
   const box = document.getElementById('feedback1');
-  box.innerHTML = `
-    <div class="feedback-box">
-      <div class="hebrew">${f.heb}</div>
-      <div class="translation">${f.ru}</div>
-      <div class="source">${f.note}</div>
-    </div>`;
+  box.innerHTML = `<div class="feedback-box"><div class="hebrew">${f.heb}</div><div class="translation">${f.ru}</div><div class="source">${f.note}</div></div>`;
   box.classList.remove('hidden');
   document.getElementById('btn1').classList.remove('hidden');
-
-  // Update manna position based on soul level
   const tent = document.getElementById('tentEl');
   const positions = [65, 45, 25, 15, 8];
   if (tent) tent.style.left = positions[state.soulLevel - 1] + '%';
   spawnManna(3, [10, 30]);
 }
+window.makeChoice1 = makeChoice1;
 
-// ===== SCREEN 2: DAY 2 — TWO BREADS =====
 function renderDay2(el) {
-  const sortData = [
-    { text: 'Вопросы и споры', correct: 'earth' },
-    { text: 'Свет без отходов', correct: 'heaven' },
-    { text: 'Требует труда', correct: 'earth' },
-    { text: 'Для каждой души', correct: 'heaven' },
-    { text: 'Хрустящая корка', correct: 'earth' },
-    { text: 'Спускается сам', correct: 'heaven' },
-  ];
-
+  const s = screenText('day2');
+  const hs = src().day2;
   el.innerHTML = `
-    ${progressBar(2,7)}
+    ${progressBar(2, 7)}
     ${dayDots(2)}
-    <div class="scene-title">День второй · יוֹם שֵׁנִי</div>
-    <div class="day-title">Два вида хлеба</div>
-
-    <div class="body-text">Ребе проводит параллель: ман — это не только еда в пустыне. Это образ двух видов Торы, двух видов духовной пищи.</div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;direction:ltr;">
-      <div style="background:rgba(139,98,20,0.08);border:1px solid var(--gold);border-radius:4px;padding:16px;text-align:center;">
-        <div style="font-family:'Noto Serif Hebrew',serif;font-size:1.3rem;color:var(--gold-deep);margin-bottom:8px;">לֶחֶם מִן הָאָרֶץ</div>
-        <div style="font-size:0.85rem;color:var(--text-mid);font-style:italic;">Хлеб с земли</div>
-        <div style="font-size:0.85rem;color:var(--text-dark);margin-top:8px;font-family:'Noto Serif Hebrew',serif;">נִגְלֶה</div>
-        <div style="font-size:0.8rem;color:var(--text-mid);">Открытая Тора</div>
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    <div class="body-text">${s.body}</div>
+    <div class="dual-bread-grid">
+      <div class="dual-bread-card earth">
+        <div class="dual-bread-he">${hs.breadEarthHe}</div>
+        <div class="dual-bread-title">${s.breadEarthTitle}</div>
+        <div class="dual-bread-mini-he">${hs.niglehHe}</div>
+        <div class="dual-bread-body">${s.breadEarthBody}</div>
       </div>
-      <div style="background:rgba(107,154,184,0.08);border:1px solid var(--sky);border-radius:4px;padding:16px;text-align:center;">
-        <div style="font-family:'Noto Serif Hebrew',serif;font-size:1.3rem;color:#3d6b8a;margin-bottom:8px;">לֶחֶם מִן הַשָּׁמַיִם</div>
-        <div style="font-size:0.85rem;color:var(--text-mid);font-style:italic;">Хлеб с Небес</div>
-        <div style="font-size:0.85rem;color:var(--text-dark);margin-top:8px;font-family:'Noto Serif Hebrew',serif;">פְּנִימִיּוּת הַתּוֹרָה</div>
-        <div style="font-size:0.8rem;color:var(--text-mid);">Внутренняя Тора, Хасидус</div>
+      <div class="dual-bread-card heaven">
+        <div class="dual-bread-he">${hs.breadHeavenHe}</div>
+        <div class="dual-bread-title">${s.breadHeavenTitle}</div>
+        <div class="dual-bread-mini-he">${hs.pnimiutHe}</div>
+        <div class="dual-bread-body">${s.breadHeavenBody}</div>
       </div>
     </div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">פְּנִימִיּוּת הַתּוֹרָה — לֶחֶם מִן הַשָּׁמַיִם, שֶׁאֵין בָּהּ קֻשְׁיוֹת</div>
-      <div class="quote-russian">«Пнимиют аТора — хлеб с Небес, в котором нет неразрешённых вопросов»</div>
-      <div class="quote-source">Ребе, Беаалотха 5751</div>
-    </div>
-
-    <div class="body-text"><strong>Мини-игра:</strong> распредели карточки по двум категориям</div>
-
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text"><strong>${s.gameLead}</strong> ${s.gameText}</div>
     <div class="sort-cards" id="sortCards">
-      ${sortData.map((item, i) => `
-        <div class="sort-card" onclick="sortCard(this, '${item.correct}', ${i})" data-index="${i}" data-correct="${item.correct}">${item.text}</div>
-      `).join('')}
+      ${s.sortData.map((item, i) => `<div class="sort-card" onclick="sortCard(this, '${item.correct}', ${i})" data-index="${i}" data-correct="${item.correct}">${item.text}</div>`).join('')}
     </div>
-
     <div class="sort-container">
       <div class="sort-zone" id="zone-earth" onclick="dropToZone('earth')">
-        <h4>לֶחֶם מִן הָאָרֶץ 🌾</h4>
-        <p>Хлеб с земли · Нигле</p>
-        <div id="earth-results"></div>
+        <h4>${hs.breadEarthHe} 🌾</h4><p>${s.zoneEarth}</p><div id="earth-results"></div>
       </div>
       <div class="sort-zone" id="zone-heaven" onclick="dropToZone('heaven')">
-        <h4>לֶחֶם מִן הַשָּׁמַיִם ✨</h4>
-        <p>Хлеб с Небес · Пнимиют</p>
-        <div id="heaven-results"></div>
+        <h4>${hs.breadHeavenHe} ✨</h4><p>${s.zoneHeaven}</p><div id="heaven-results"></div>
       </div>
     </div>
-
     <div id="sortFeedback" class="hidden"></div>
-    <div id="sortBtn" class="hidden">
-      <button class="btn-primary" onclick="next()">Следующий день →</button>
-    </div>
-
+    <div id="sortBtn" class="hidden"><button class="btn-primary" onclick="next()">${s.next}</button></div>
     ${chapterGlossary([
-      { term: 'נִגְלֶה · Нигле', def: 'Открытое учение Торы — hалаха, Гемара. Параллель «хлеба с земли» — требует труда, имеет вопросы.' },
-      { term: 'פְּנִימִיּוּת הַתּוֹרָה · Пнимиют аТора', def: 'Внутреннее учение — Кабала, Хасидус. Параллель «хлеба с Небес» — без неразрешимых вопросов.' },
-      { term: 'מָן · Ман', def: 'Небесная пища, ниспосланная евреям в пустыне. В сихе Ребе — символ духовной пищи для каждого еврея.' }
+      glossaryItem(hs.niglehHe, s.glossary[0]),
+      glossaryItem(hs.pnimiutHe, s.glossary[1]),
+      glossaryItem('מָן', s.glossary[2])
     ])}
-
-    ${footerCredit()}
-  `;
-
-  window._sortData = sortData;
+    ${footerCredit()}`;
+  window._sortData = s.sortData;
   window._sortSelected = null;
   window._sortPlaced = 0;
   window._sortCorrect = 0;
 }
 
 function sortCard(el, correct, index) {
-  document.querySelectorAll('.sort-card').forEach(c => c.style.outline = 'none');
+  document.querySelectorAll('.sort-card').forEach(c => { c.style.outline = 'none'; });
   el.style.outline = '2px solid var(--gold)';
   window._sortSelected = { el, correct, index };
 }
+window.sortCard = sortCard;
 
 function dropToZone(zone) {
+  const s = screenText('day2');
+  const hs = src().day2;
   if (!window._sortSelected) return;
-  const { el, correct, index } = window._sortSelected;
+  const { el, correct } = window._sortSelected;
   el.classList.add('placed');
   el.style.outline = 'none';
-
   const isCorrect = correct === zone;
   window._sortPlaced++;
   if (isCorrect) window._sortCorrect++;
-
   const result = document.createElement('div');
   result.className = `sort-result ${isCorrect ? 'correct' : 'wrong'}`;
   result.textContent = (isCorrect ? '✓ ' : '✗ ') + el.textContent;
   document.getElementById(zone + '-results').appendChild(result);
-
   window._sortSelected = null;
   state.sortScore = window._sortCorrect;
-
   if (window._sortPlaced === window._sortData.length) {
     const fb = document.getElementById('sortFeedback');
-    fb.innerHTML = `<div class="feedback-box">
-      <div class="hebrew">כָּל יִשְׂרָאֵל יֵשׁ לָהֶם חֵלֶק לָעוֹלָם הַבָּא</div>
-      <div class="translation">«У каждого еврея есть доля в будущем мире» — и в обеих видах Торы тоже.</div>
-      <div class="source">Результат: ${window._sortCorrect} из ${window._sortData.length} верно · Ребе: Пнимиют аТора предназначена для каждого.</div>
-    </div>`;
+    fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${hs.feedbackHe}</div><div class="translation">${s.feedback}</div><div class="source">${window._sortCorrect} / ${window._sortData.length} · ${s.feedbackSource}</div></div>`;
     fb.classList.remove('hidden');
     document.getElementById('sortBtn').classList.remove('hidden');
   }
 }
+window.dropToZone = dropToZone;
 
-// ===== SCREEN 3: DAY 3 — NOBODY IS LOST =====
 function renderDay3(el) {
+  const s = screenText('day3');
+  const hs = src().day3;
   el.innerHTML = `
-    ${progressBar(3,7)}
+    ${progressBar(3, 7)}
     ${dayDots(3)}
-    <div class="scene-title">День третий · יוֹם שְׁלִישִׁי</div>
-    <div class="day-title">Никто не потерян</div>
-
-    ${mannaScene(55, 'Дальние поля за лагерем')}
-
-    <div class="quote-block">
-      <div class="quote-hebrew">אֲפִילוּ מִי שֶׁנָּשָׂא פֶּסֶל מִיכָה — אָכַל אֶת הַמָּן</div>
-      <div class="quote-russian">«Даже тот, кто нёс идола Михи — ел ман»</div>
-      <div class="quote-source">Санhедрин 103б, цитируется в сихе Ребе</div>
-    </div>
-
-    <div class="body-text">
-      Некоторые евреи в пустыне несли с собой идола. Казалось бы — они недостойны небесной пищи. Но ман спускался и к ним. И — самое удивительное — <strong>не оставлял в них отходов</strong>.
-    </div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">הַמָּן זִיכֵּךְ אֶת כָּל יִשְׂרָאֵל וְעָשָׂה אוֹתָם רְאוּיִים לְקַבָּלַת הַתּוֹרָה</div>
-      <div class="quote-russian">«Ман очистил весь Израиль и сделал их достойными получить Тору»</div>
-      <div class="quote-source">Мехилта, Шмот 16:4 · цитируется Ребе</div>
-    </div>
-
-    <div class="body-text">Ребе объясняет: ман не менял грешника мгновенно. Но процесс шёл. Это как <span class="term" data-tip-heb="תְּשׁוּבָה · Тшува" data-tip="Возвращение к Б-гу. Духовное пробуждение, которое ман постепенно пробуждал даже в тех, кто нёс идола. Ман работает изнутри.">תְּשׁוּבָה</span> — она не всегда происходит сразу. Но духовная пища продолжает работать внутри.</div>
-
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    ${mannaScene(55, s.sceneLabel)}
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text">${s.body1}</div>
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
+    <div class="body-text">${s.body2Before}${termSpan(hs.teshuvaHe, s.termLabel, s.termDef)}${s.body2After}</div>
     ${divider()}
-
-    <div class="body-text"><strong>Вопрос для размышления:</strong></div>
-    <div style="font-size:1.1rem;font-style:italic;color:var(--text-mid);text-align:center;margin:12px 0;direction:ltr;">
-      Если ман питал даже тех, кто нёс идола —<br>значит ли это, что никто не потерян?
-    </div>
-
-    <textarea class="journal-input" id="journalDay3" placeholder="Напиши свою мысль здесь... (или просто прочитай и подумай)"></textarea>
-
+    <div class="body-text"><strong>${s.reflectionLead}</strong></div>
+    <div class="reflection-question">${s.reflectionQuestion}</div>
+    <textarea class="journal-input" id="journalDay3" placeholder="${s.placeholder}"></textarea>
     <div id="journal3feedback" class="hidden"></div>
-
-    <button class="btn-secondary" onclick="submitJournal3()">Записать мысль</button>
-    <button class="btn-primary" onclick="next()">Следующий день →</button>
-
+    <button class="btn-secondary" onclick="submitJournal3()">${s.submit}</button>
+    <button class="btn-primary" onclick="next()">${s.next}</button>
     ${chapterGlossary([
-      { term: 'תְּשׁוּבָה · Тшува', def: 'Возвращение к Б-гу. Ман постепенно пробуждал тшуву даже в тех, кто нёс идола. Работает изнутри, неспешно.' },
-      { term: 'מָן · Ман', def: 'Небесная пища без отходов — символ духовного света, очищающего душу. Питал каждого еврея, независимо от уровня.' }
+      glossaryItem(hs.teshuvaHe, s.glossary[0]),
+      glossaryItem('מָן', s.glossary[1])
     ])}
-
-    ${footerCredit()}
-  `;
+    ${footerCredit()}`;
   spawnManna(8, [40, 80]);
 }
 
 function submitJournal3() {
+  const s = screenText('day3');
+  const hs = src().day3;
   const val = document.getElementById('journalDay3').value.trim();
-  state.journalEntries.push(val || '(размышление без слов)');
+  state.journalEntries.push(val || s.emptyJournal);
   const fb = document.getElementById('journal3feedback');
-  fb.innerHTML = `<div class="feedback-box">
-    <div class="hebrew">תִּיכֶף לִתְשׁוּבָה — גְּאוּלָה</div>
-    <div class="translation">«Сразу за тшувой — Избавление»</div>
-    <div class="source">Знаменитый призыв Ребе Раяца, который Любавичский Ребе цитирует в этой сихе</div>
-  </div>`;
+  fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${hs.feedbackHe}</div><div class="translation">${s.feedback}</div><div class="source">${s.feedbackSource}</div></div>`;
   fb.classList.remove('hidden');
 }
+window.submitJournal3 = submitJournal3;
 
-// ===== SCREEN 4: DAY 4 — MOSHE AND MANNA =====
 function renderDay4(el) {
+  const s = screenText('day4');
+  const hs = src().day4;
   el.innerHTML = `
-    ${progressBar(4,7)}
+    ${progressBar(4, 7)}
     ${dayDots(4)}
-    <div class="scene-title">День четвёртый · יוֹם רְבִיעִי</div>
-    <div class="day-title">Моше и небесный хлеб</div>
-
-    <div class="body-text">Ребе приводит неожиданную мысль из <span class="term" data-tip-heb="תּוֹרָה אוֹר · Тора Ор" data-tip="Сборник хасидских маамаров Алтер Ребе — рабби Шнеура Залмана из Ляд, основателя движения Хабад.">תּוֹרָה אוֹר</span>: Моше-рабейну провёл 40 дней на горе Синай без еды. Но он всё же «питался» — духовным маном, как ангелы.</div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">לֶחֶם אַבִּירִים אָכַל אִישׁ</div>
-      <div class="quote-russian">«Хлеб могучих ел человек» (Теhилим 78:25)</div>
-      <div class="quote-source">Объясняется в Тора Ор, цитируется в сихе Ребе</div>
-    </div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">מֹשֶׁה רַבֵּינוּ לֹא אָכַל מָן בְּגַשְׁמִיּוּת — אֶלָּא כְּמַלְאָכִים, בְּרוּחָנִיּוּת</div>
-      <div class="quote-russian">«Моше не ел ман в физическом виде — но вкушал его духовно, как ангелы»</div>
-      <div class="quote-source">Тора Ор, Ваякhел; Ликутей Тора, Бамидбар</div>
-    </div>
-
-    <div class="body-text">Это учит нас: существует шкала. На одном конце — <span class="term" data-tip-heb="גַּשְׁמִיּוּת · Гашмиют" data-tip="Материальный мир, физическое измерение бытия. В учении Хабада — низшая из сфирот, самое плотное облачение Б-жественного света.">גַּשְׁמִיּוּת</span> (материальное), на другом — <span class="term" data-tip-heb="רוּחָנִיּוּת · Рухниют" data-tip="Духовность, нематериальное измерение. Ман был духовным светом высочайших миров, облачённым в физическую пищу.">רוּחָנִיּוּת</span> (духовное). Ман существовал на обоих уровнях одновременно.</div>
-
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    <div class="body-text">${s.body1Before}${termSpan(hs.torahOrHe, s.termLabel, s.termDef)}${s.body1After}</div>
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
+    <div class="body-text">${s.body2Before}${termSpan(hs.gashmiyutHe, s.gashmiyutLabel, s.gashmiyutDef)}${s.body2Middle}${termSpan(hs.ruhniyutHe, s.ruhniyutLabel, s.ruhniyutDef)}${s.body2After}</div>
     <div class="scale-container">
       <div class="scale-labels">
-        <span class="scale-label-gashmiyut">גַּשְׁמִיּוּת · Материальное</span>
-        <span class="scale-label-ruhniut">רוּחָנִיּוּת · Духовное</span>
+        <span class="scale-label-gashmiyut">${hs.gashmiyutHe} · ${s.scaleLeft}</span>
+        <span class="scale-label-ruhniut">${hs.ruhniyutHe} · ${s.scaleRight}</span>
       </div>
-      <div class="scale-track" id="scaleTrack" onclick="moveScale(event)">
-        <div class="scale-thumb" id="scaleThumb" style="left:50%"></div>
-      </div>
-      <div id="scaleLabel" style="text-align:center;font-style:italic;font-size:0.9rem;color:var(--text-mid);margin-top:8px;">
-        Двигай шкалу: где сейчас находишься ты?
-      </div>
+      <div class="scale-track" id="scaleTrack" onclick="moveScale(event)"><div class="scale-thumb" id="scaleThumb" style="left:${state.scaleValue}%"></div></div>
+      <div id="scaleLabel" class="scale-label-copy">${s.scalePrompt}</div>
     </div>
-
     <div id="scaleFeedback" class="hidden"></div>
-
-    <button class="btn-primary" onclick="next()">Следующий день →</button>
-
+    <button class="btn-primary" onclick="next()">${s.next}</button>
     ${chapterGlossary([
-      { term: 'גַּשְׁמִיּוּת · Гашмиют', def: 'Материальный мир, физическое измерение бытия. Самое плотное облачение Б-жественного света.' },
-      { term: 'רוּחָנִיּוּת · Рухниют', def: 'Духовность, нематериальное измерение. Ман был духовным светом высочайших миров, облачённым в физическую пищу.' },
-      { term: 'מֹשֶׁה רַבֵּינוּ · Моше Рабейну', def: 'Моше-учитель наш. Провёл 40 дней на Синае без еды, питаясь духовным маном, как ангелы.', ref: 'Тора Ор, Ваякhел' }
+      glossaryItem(hs.gashmiyutHe, s.glossary[0]),
+      glossaryItem(hs.ruhniyutHe, s.glossary[1]),
+      glossaryItem('מֹשֶׁה רַבֵּינוּ', s.glossary[2])
     ])}
-
-    ${footerCredit()}
-  `;
+    ${footerCredit()}`;
 }
 
 function moveScale(e) {
+  const s = screenText('day4');
+  const hs = src().day4;
   const track = document.getElementById('scaleTrack');
   const rect = track.getBoundingClientRect();
   const pct = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
   state.scaleValue = pct;
   document.getElementById('scaleThumb').style.left = pct + '%';
-
-  let label, heb;
-  if (pct < 25) { label = 'Очень земное — и это тоже честно'; heb = 'גַּשְׁמִיּוּת'; }
-  else if (pct < 50) { label = 'Больше земного, но духовность уже чувствуется'; heb = 'בֵּינוֹנִי בְּגַשְׁמִיּוּת'; }
-  else if (pct < 75) { label = 'Баланс — как бейнони на пути'; heb = 'בֵּינוֹנִי'; }
-  else { label = 'Больше духовного — редкий дар'; heb = 'קְרוֹב לְרוּחָנִיּוּת'; }
-
+  const labelIndex = pct < 25 ? 0 : pct < 50 ? 1 : pct < 75 ? 2 : 3;
+  const [heb, label] = s.scaleLabels[labelIndex];
   document.getElementById('scaleLabel').innerHTML = `<span style="font-family:'Noto Serif Hebrew',serif;color:var(--gold-deep)">${heb}</span> — ${label}`;
-
   const fb = document.getElementById('scaleFeedback');
-  fb.innerHTML = `<div class="feedback-box">
-    <div class="hebrew">גַּם הַמָּן בְּגַשְׁמִיּוּת הָיוּ בּוֹ אוֹרוֹת רוּחָנִיִּים גְּבוֹהִים</div>
-    <div class="translation">«Даже в физическом мане были облачены духовные светы высочайших уровней»</div>
-    <div class="source">Ребе, Беаалотха 5751 · Тора Ор, Ваякhел</div>
-  </div>`;
+  fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${hs.feedbackHe}</div><div class="translation">${s.feedback}</div><div class="source">${s.feedbackSource}</div></div>`;
   fb.classList.remove('hidden');
 }
+window.moveScale = moveScale;
 
-// ===== SCREEN 5: DAY 5 — SHABBAT AND MANNA =====
 function renderDay5(el) {
+  const s = screenText('day5');
+  const hs = src().day5;
   el.innerHTML = `
-    ${progressBar(5,7)}
+    ${progressBar(5, 7)}
     ${dayDots(5)}
-    <div class="scene-title">День пятый · יוֹם חֲמִישִׁי</div>
-    <div class="day-title">Шабес и ман — связь миров</div>
-
-    <div class="body-text">Ман не спускался в <span class="term" data-tip-heb="שַׁבָּת · Шабат" data-tip="Седьмой день недели — день покоя и святости. Зоhар: все шесть дней получают своё благословение именно от Шабата.">שַׁבָּת</span>. Почему? Ребе объясняет через глубокую идею из Зоhара.</div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">בְּשַׁבָּת — עֲלִיַּת הָעוֹלָמוֹת. וּבִזְמַן הָעֲלִיָּה אִי אֶפְשָׁר לְהַמְשִׁיךְ מֵרוּחָנִי לְגַשְׁמִי</div>
-      <div class="quote-russian">«В Шабес — подъём миров. А во время подъёма невозможно низвести духовное в материальное»</div>
-      <div class="quote-source">Ребе, Беаалотха 5751</div>
-    </div>
-
-    <div class="body-text">Но есть удивительный парадокс — весь ман всей недели получал своё благословение именно из Шабеса:</div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">כָּל שֵׁשֶׁת יְמֵי הַשָּׁבוּעַ מְקַבְּלִים בְּרָכָה מִיּוֹם הַשְּׁבִיעִי</div>
-      <div class="quote-russian">«Все шесть дней недели получают благословение от седьмого дня»</div>
-      <div class="quote-source">Зоhар, Ваякhел (том 2, стр. 63б)</div>
-    </div>
-
-    <div class="body-text">А когда человек не знает, какой раздел Торы читать в данный Шабес — Ребе объясняет: читай раздел о мане. Почему?</div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">כָּל הַשְׁפָּעָה שֶׁנִּמְשֶׁכֶת לָעוֹלָם — נִמְשֶׁכֶת עַל יְדֵי הַתּוֹרָה</div>
-      <div class="quote-russian">«Каждое влияние, нисходящее в мир — нисходит через Тору»</div>
-      <div class="quote-source">Ребе, там же — объяснение связи мана и Шабеса</div>
-    </div>
-
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    <div class="body-text">${s.body1Before}${termSpan(hs.shabbatHe, s.termLabel, s.termDef)}${s.body1After}</div>
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text">${s.body2}</div>
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
+    <div class="body-text">${s.body3}</div>
+    ${quoteBlock(hs.quote3He, s.quote3, s.quote3Source)}
     ${divider()}
-
-    <div class="body-text"><strong>Головоломка:</strong> каждый день в пустыне падал ман. Расставь правильное количество порций по дням недели — нажимай на клетку, чтобы изменить.</div>
-
+    <div class="body-text"><strong>${s.puzzleLead}</strong> ${s.puzzleText}</div>
     <div id="mannaGrid" style="margin:20px 0;"></div>
-
-    <div id="mannaStatus" style="text-align:center;color:var(--text-mid);font-size:0.9rem;margin:8px 0 16px;">Распределено порций: 0 / 7</div>
-
-    <div style="text-align:center;margin-bottom:16px;">
-      <button onclick="checkMannaDistribution()" style="background:var(--gold-deep);color:var(--white);border:none;padding:10px 28px;font-family:'Cormorant Garamond',serif;font-size:1rem;border-radius:3px;cursor:pointer;letter-spacing:0.03em;">Проверить →</button>
-    </div>
-
+    <div id="mannaStatus" style="text-align:center;color:var(--text-mid);font-size:0.9rem;margin:8px 0 16px;">${interpolate(s.status, { count: 0 })}</div>
+    <div style="text-align:center;margin-bottom:16px;"><button onclick="checkMannaDistribution()" class="btn-inline">${s.check}</button></div>
     <div id="mannaResult" class="hidden"></div>
-    <div id="mannaBtn" class="hidden">
-      <button class="btn-primary" onclick="next()">К Шабесу →</button>
-    </div>
-
+    <div id="mannaBtn" class="hidden"><button class="btn-primary" onclick="next()">${s.next}</button></div>
     ${chapterGlossary([
-      { term: 'שַׁבָּת · Шабат', def: 'Седьмой день недели — день покоя и святости. Зоhар: все шесть дней получают своё благословение именно от Шабата.' },
-      { term: 'מָן · Ман', def: 'В Шабат не спускался — миры поднимались вверх, и низводить духовное в материальное было невозможно. Но именно Шабат питал весь ман недели.' }
+      glossaryItem(hs.shabbatHe, s.glossary[0]),
+      glossaryItem('מָן', s.glossary[1])
     ])}
-
-    ${footerCredit()}
-  `;
-
+    ${footerCredit()}`;
   window._mannaDays = [0, 0, 0, 0, 0, 0, 0];
   _renderMannaGrid();
 }
 
 function _renderMannaGrid() {
+  const s = screenText('day5');
   const dayNames = [
-    { heb: 'יום א\'', ru: 'Воскр.' },
-    { heb: 'יום ב\'', ru: 'Понед.' },
-    { heb: 'יום ג\'', ru: 'Вторн.' },
-    { heb: 'יום ד\'', ru: 'Среда' },
-    { heb: 'יום ה\'', ru: 'Четв.' },
-    { heb: 'עֶרֶב שַׁבָּת', ru: 'Пятн.' },
-    { heb: 'שַׁבָּת', ru: 'Шабес' },
+    { heb: 'יום א\'', ru: s.dayNames[0] },
+    { heb: 'יום ב\'', ru: s.dayNames[1] },
+    { heb: 'יום ג\'', ru: s.dayNames[2] },
+    { heb: 'יום ד\'', ru: s.dayNames[3] },
+    { heb: 'יום ה\'', ru: s.dayNames[4] },
+    { heb: 'עֶרֶב שַׁבָּת', ru: s.dayNames[5] },
+    { heb: 'שַׁבָּת', ru: s.dayNames[6] }
   ];
   const grid = document.getElementById('mannaGrid');
   if (!grid) return;
   const portions = window._mannaDays;
   const total = portions.reduce((a, b) => a + b, 0);
-  grid.innerHTML = `
-    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;direction:ltr;">
-      ${dayNames.map((day, i) => {
-        const isShabbat = i === 6;
-        const count = portions[i];
-        const icons = count === 0
-          ? (isShabbat ? '<span style="font-size:1.1rem;">✡</span>' : '<span style="color:var(--sand-dark);font-size:1.3rem;">·</span>')
-          : '🌾'.repeat(count);
-        return `
-          <div onclick="${isShabbat ? '' : `mannaClickDay(${i})`}"
-               style="
-                 width:80px;min-height:100px;
-                 background:${isShabbat ? 'rgba(26,37,53,0.07)' : 'rgba(201,146,42,0.06)'};
-                 border:1.5px solid ${isShabbat ? 'var(--night-mid)' : 'var(--gold)'};
-                 border-radius:4px;padding:10px 4px 8px;
-                 text-align:center;
-                 cursor:${isShabbat ? 'default' : 'pointer'};
-                 transition:background 0.15s;
-                 user-select:none;
-                 ${!isShabbat && count > 0 ? 'background:rgba(201,146,42,0.14);' : ''}
-               ">
-            <div style="font-family:'Noto Serif Hebrew',serif;font-size:0.72rem;color:${isShabbat ? 'var(--night-mid)' : 'var(--gold-deep)'};margin-bottom:3px;line-height:1.2;">${day.heb}</div>
-            <div style="font-size:0.68rem;color:var(--text-mid);margin-bottom:8px;">${day.ru}</div>
-            <div style="font-size:1.25rem;min-height:28px;line-height:1.4;">${icons}</div>
-            <div style="font-size:0.62rem;color:var(--text-light);margin-top:6px;">${isShabbat ? 'покой' : (count === 0 ? 'нажми' : count + ' порц.')}</div>
-          </div>`;
-      }).join('')}
+  grid.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;direction:ltr;">${dayNames.map((day, i) => {
+    const isShabbat = i === 6;
+    const count = portions[i];
+    const icons = count === 0 ? (isShabbat ? '<span style="font-size:1.1rem;">✡</span>' : '<span style="color:var(--sand-dark);font-size:1.3rem;">·</span>') : '🌾'.repeat(count);
+    return `<div onclick="${isShabbat ? '' : `mannaClickDay(${i})`}" style="width:80px;min-height:100px;background:${isShabbat ? 'rgba(26,37,53,0.07)' : 'rgba(201,146,42,0.06)'};border:1.5px solid ${isShabbat ? 'var(--night-mid)' : 'var(--gold)'};border-radius:4px;padding:10px 4px 8px;text-align:center;cursor:${isShabbat ? 'default' : 'pointer'};transition:background 0.15s;user-select:none;${!isShabbat && count > 0 ? 'background:rgba(201,146,42,0.14);' : ''}">
+      <div style="font-family:'Noto Serif Hebrew',serif;font-size:0.72rem;color:${isShabbat ? 'var(--night-mid)' : 'var(--gold-deep)'};margin-bottom:3px;line-height:1.2;">${day.heb}</div>
+      <div style="font-size:0.68rem;color:var(--text-mid);margin-bottom:8px;">${day.ru}</div>
+      <div style="font-size:1.25rem;min-height:28px;line-height:1.4;">${icons}</div>
+      <div style="font-size:0.62rem;color:var(--text-light);margin-top:6px;">${isShabbat ? s.restLabel : (count === 0 ? s.clickLabel : interpolate(s.portionsLabel, { count }))}</div>
     </div>`;
+  }).join('')}</div>`;
   const statusEl = document.getElementById('mannaStatus');
-  if (statusEl) statusEl.textContent = `Распределено порций: ${total} / 7`;
+  if (statusEl) statusEl.textContent = interpolate(s.status, { count: total });
 }
+window._renderMannaGrid = _renderMannaGrid;
 
 function mannaClickDay(i) {
   if (i === 6) return;
   window._mannaDays[i] = (window._mannaDays[i] + 1) % 3;
   _renderMannaGrid();
   const resultEl = document.getElementById('mannaResult');
-  if (resultEl && !resultEl.classList.contains('hidden')) {
-    resultEl.classList.add('hidden');
-  }
+  if (resultEl && !resultEl.classList.contains('hidden')) resultEl.classList.add('hidden');
 }
+window.mannaClickDay = mannaClickDay;
 
 function checkMannaDistribution() {
+  const s = screenText('day5');
+  const hs = src().day5;
   const correct = [1, 1, 1, 1, 1, 2, 0];
   const current = window._mannaDays;
   const allCorrect = correct.every((v, i) => v === current[i]);
   const resultEl = document.getElementById('mannaResult');
-
   if (allCorrect) {
-    resultEl.innerHTML = `
-      <div class="feedback-box">
-        <div class="hebrew">הַשַׁבָּת — מְקוֹר הַבְּרָכָה לְכָל יְמֵי הַשָּׁבוּעַ</div>
-        <div class="translation">Верно! Шабес — источник благословения для всех дней недели.</div>
-        <div class="source">Вот парадокс: Шабес сам не «получает» ман — но именно он даёт жизнь всем остальным дням. Тот, кто поднялся выше получения, становится источником для всех.</div>
-      </div>`;
+    resultEl.innerHTML = `<div class="feedback-box"><div class="hebrew">${hs.successHe}</div><div class="translation">${s.success}</div><div class="source">${s.successSource}</div></div>`;
     resultEl.classList.remove('hidden');
     document.getElementById('mannaBtn').classList.remove('hidden');
   } else {
-    const dayLabels = ['воскресенье', 'понедельник', 'вторник', 'среду', 'четверг', 'пятницу', 'Шабес'];
-    const wrong = correct.map((v, i) => v !== current[i] ? dayLabels[i] : null).filter(Boolean);
-    resultEl.innerHTML = `
-      <div style="text-align:center;color:var(--red-accent);font-size:0.9rem;padding:12px 16px;background:rgba(139,32,32,0.06);border-radius:4px;border:1px solid rgba(139,32,32,0.15);">
-        Не совсем верно. Подсказка: проверь ${wrong.join(', ')}.
-      </div>`;
+    const wrong = correct.map((v, i) => v !== current[i] ? s.dayLabels[i] : null).filter(Boolean);
+    resultEl.innerHTML = `<div class="feedback-error">${interpolate(s.wrong, { days: wrong.join(', ') })}</div>`;
     resultEl.classList.remove('hidden');
   }
 }
+window.checkMannaDistribution = checkMannaDistribution;
 
-// ===== SCREEN 6: DAY 6 — TESHUVAH =====
 function renderDay6(el) {
+  const s = screenText('day6');
+  const hs = src().day6;
   el.innerHTML = `
-    ${progressBar(6,7)}
+    ${progressBar(6, 7)}
     ${dayDots(6)}
-    <div class="scene-title">День шестой · יוֹם שִׁשִּׁי</div>
-    <div class="day-title">Тшува через ман</div>
-
-    <div class="body-text">Ребе подчёркивает: ман не делал грешников праведниками мгновенно. Некоторые продолжали молоть даже после многократного вкушения мана.</div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">אַף עַל פִּי שֶׁאָכְלוּ מָן פְּעָמִים רַבּוֹת — עֲדַיִן הָיוּ שֶׁצָּרְכוּ לִטְחוֹן</div>
-      <div class="quote-russian">«Хотя они ели ман много раз — всё равно были те, кому нужно было молоть»</div>
-      <div class="quote-source">Ребе, Беаалотха 5751 · на основе Йома 75а</div>
-    </div>
-
-    <div class="body-text">Но духовная работа шла. Каждый кусочек мана действовал изнутри. И в конце концов — приводил к <span class="term" data-tip-heb="תְּשׁוּבָה · Тшува" data-tip="Возвращение к Б-гу. Ребе: сразу за тшувой — Геула. Ман постепенно готовил к этому каждого еврея.">תְּשׁוּבָה</span>.</div>
-
-    <div class="body-text">Ребе связывает это с Геулой. Он цитирует своего тестя — <span class="term" data-tip-heb="הרבי הריי״צ · Ребе Раяц" data-tip="Рабби Йосеф Ицхак Шнеерсон (1880–1950) — шестой Любавичский Ребе. Тесть нынешнего Ребе. Его призыв: тшува — Геула.">הרבי הריי״צ</span>:</div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">תִּיכֶף לִתְשׁוּבָה — גְּאוּלָה</div>
-      <div class="quote-russian">«Сразу за тшувой — Избавление»</div>
-      <div class="quote-source">Игрот Кодеш Ребе Раяца, том 5, стр. 361 · цитируется в сихе</div>
-    </div>
-
-    <div class="body-text">И затем — слова самого Ребе из этой сихи:</div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">כְּבָר גָּמְרוּ אֶת הָ"לִיטוֹשׁ", וְצָרִיךְ רַק לַעֲמוֹד מוּכָן לְקַבָּלַת פְּנֵי מָשִׁיחַ</div>
-      <div class="quote-russian">«Уже закончили "полировку кнопок", и нужно только стоять готовыми встретить Мошиаха»</div>
-      <div class="quote-source">Ребе, Шабес Беаалотха, 19 Сивана 5751</div>
-    </div>
-
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    <div class="body-text">${s.body1}</div>
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text">${s.body2Before}${termSpan(hs.teshuvaHe, s.termLabel, s.termDef)}${s.body2After}</div>
+    <div class="body-text">${s.body3Before}${termSpan(hs.rayatzHe, s.rayatzLabel, s.rayatzDef)}${s.body3After}</div>
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
+    <div class="body-text">${s.body4}</div>
+    ${quoteBlock(hs.quote3He, s.quote3, s.quote3Source)}
     ${divider()}
-
-    <div class="body-text"><strong>Вопрос дня:</strong></div>
-    <div style="font-size:1.05rem;font-style:italic;color:var(--text-mid);text-align:center;margin:12px 0;direction:ltr;">
-      Что в твоей жизни сейчас требует «помола» —<br>терпения и постепенного труда?
-    </div>
-
-    <textarea class="journal-input" id="journalDay6" placeholder="Запиши честно — этот дневник только для тебя..."></textarea>
-
-    <button class="btn-secondary" onclick="submitJournal6()">Записать</button>
+    <div class="body-text"><strong>${s.reflectionLead}</strong></div>
+    <div class="reflection-question">${s.reflectionQuestion}</div>
+    <textarea class="journal-input" id="journalDay6" placeholder="${s.placeholder}"></textarea>
+    <button class="btn-secondary" onclick="submitJournal6()">${s.submit}</button>
     <div id="journal6fb" class="hidden"></div>
-    <button class="btn-primary" onclick="next()" style="margin-top:20px">Шабес наступает →</button>
-
+    <button class="btn-primary" onclick="next()" style="margin-top:20px">${s.next}</button>
     ${chapterGlossary([
-      { term: 'תְּשׁוּבָה · Тшува', def: 'Возвращение к Б-гу. Ман работал медленно, но неуклонно — каждый кусочек приближал грешника к тшуве.' },
-      { term: 'גְּאוּלָה · Геула', def: 'Избавление. Ребе Раяц: «Сразу за тшувой — Геула». Тшува и Геула неразрывно связаны.' },
-      { term: 'הרבי הריי״צ · Ребе Раяц', def: 'Рабби Йосеф Ицхак Шнеерсон (1880–1950) — шестой Любавичский Ребе. Тесть нынешнего Ребе.' }
+      glossaryItem(hs.teshuvaHe, s.glossary[0]),
+      glossaryItem('גְּאוּלָה', s.glossary[1]),
+      glossaryItem(hs.rayatzHe, s.glossary[2])
     ])}
-
-    ${footerCredit()}
-  `;
+    ${footerCredit()}`;
 }
 
 function submitJournal6() {
+  const s = screenText('day6');
+  const hs = src().day6;
   const val = document.getElementById('journalDay6').value.trim();
-  state.journalEntries.push(val || '...');
+  state.journalEntries.push(val || s.emptyJournal);
   const fb = document.getElementById('journal6fb');
-  fb.innerHTML = `<div class="feedback-box">
-    <div class="hebrew">כָּל יִשְׂרָאֵל יֵשׁ לָהֶם חֵלֶק לָעוֹלָם הַבָּא</div>
-    <div class="translation">Признать, что нужна работа — уже первый шаг тшувы.</div>
-    <div class="source">Санhедрин 10:1</div>
-  </div>`;
+  fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${hs.feedbackHe}</div><div class="translation">${s.feedback}</div><div class="source">${s.feedbackSource}</div></div>`;
   fb.classList.remove('hidden');
 }
+window.submitJournal6 = submitJournal6;
 
-// ===== SCREEN 7: SHABBAT =====
 function renderShabbat(el) {
-  const mannaIcon = state.choices.filter(c => c === 0).length >= 2 ? '🍞' :
-    state.choices.filter(c => c === 0).length >= 1 ? '🫓' : '🌾';
-  const soulName = state.soulLevel >= 4 ? 'צַדִּיק' : state.soulLevel >= 3 ? 'בֵּינוֹנִי' : 'בְּדֶרֶךְ';
-
+  const s = screenText('shabbat');
+  const hs = src().shabbat;
+  const mannaIcon = state.choices.filter(c => c === 0).length >= 2 ? '🍞' : state.choices.filter(c => c === 0).length >= 1 ? '🫓' : '🌾';
+  const soulName = state.soulLevel >= 4 ? hs.soulTzadikHe : state.soulLevel >= 3 ? hs.soulBeinoniHe : hs.soulPathHe;
   el.innerHTML = `
     <div style="text-align:center;margin-bottom:20px;">
-      <div style="font-family:'Noto Serif Hebrew',serif;font-size:0.85rem;color:var(--text-light);letter-spacing:0.15em;">שַׁבָּת קֹדֶשׁ</div>
-      <div class="day-title" style="margin-bottom:0">Святой Шабес</div>
+      <div style="font-family:'Noto Serif Hebrew',serif;font-size:0.85rem;color:var(--text-light);letter-spacing:0.15em;">${hs.titleHe}</div>
+      <div class="day-title" style="margin-bottom:0">${s.title}</div>
     </div>
-
     <div class="shabbat-candles">
       <div class="candle"><div class="candle-flame"></div><div class="candle-body"></div></div>
       <div class="candle" style="animation-delay:0.3s"><div class="candle-flame" style="animation-delay:0.2s"></div><div class="candle-body"></div></div>
     </div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">וַיְכֻלּוּ הַשָּׁמַיִם וְהָאָרֶץ וְכָל צְבָאָם</div>
-      <div class="quote-russian">«И завершились небо и земля, и всё воинство их» (Берешит 2:1)</div>
-      <div class="quote-source">Ребе объясняет: слово וַיְכֻלּוּ от כִּלָּיוֹן — томление, жажда</div>
-    </div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">כְּאִילּוּ יָצְאָה נִשְׁמַת הָעוֹלָם מֵאַהֲבַת ה'</div>
-      <div class="quote-russian">«Как будто вышла душа мира от любви к Б-гу»</div>
-      <div class="quote-source">Ребе, на основе Зоhара · Берешит Раба 10:4</div>
-    </div>
-
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
     ${divider()}
-
-    <div class="body-text" style="text-align:center;">Твой путь за эту неделю:</div>
-
-    <div class="week-map">
-      ${['א','ב','ג','ד','ה','ו'].map((d,i) => {
-        const icons = ['🌅','📖','🤝','⚖️','🌿','✨'];
-        return `<div class="week-day">
-          <div class="day-num">День ${i+1}</div>
-          <div class="day-icon">${icons[i]}</div>
-          <div class="day-heb">${d}'</div>
-        </div>`;
-      }).join('')}
-    </div>
-
-    <div class="manna-result-text">
-      <div class="big">Твой ман этой недели: ${mannaIcon}</div>
-      <div class="small">Уровень: <span style="font-family:'Noto Serif Hebrew',serif;color:var(--gold-deep)">${soulName}</span> · Оценок нет — только путь</div>
-    </div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">לֹא נָפַל דָּבָר — הַמָּן הָיָה לְכָל יִשְׂרָאֵל</div>
-      <div class="quote-russian">«Ни один еврей не был оставлен — ман был для каждого»</div>
-      <div class="quote-source">Ребе, Беаалотха 5751</div>
-    </div>
-
-    <button class="btn-primary" onclick="next()">К заключению →</button>
-
+    <div class="body-text" style="text-align:center;">${s.weekLead}</div>
+    <div class="week-map">${['א','ב','ג','ד','ה','ו'].map((d, i) => {
+      const icons = ['🌅', '📖', '🤝', '⚖️', '🌿', '✨'];
+      return `<div class="week-day"><div class="day-num">${s.weekDays[i]}</div><div class="day-icon">${icons[i]}</div><div class="day-heb">${d}'</div></div>`;
+    }).join('')}</div>
+    <div class="manna-result-text"><div class="big">${interpolate(s.resultLead, { icon: mannaIcon })}</div><div class="small">${interpolate(s.resultMeta, { level: soulName })}</div></div>
+    ${quoteBlock(hs.summaryQuoteHe, s.quote3, s.quote3Source)}
+    <button class="btn-primary" onclick="next()">${s.next}</button>
     ${chapterGlossary([
-      { term: 'שַׁבָּת · Шабат', def: 'Источник благословения для всех дней недели. Зоhар: כִּלָּיוֹן — томление, жажда Б-га.' },
-      { term: 'מָן · Ман', def: 'Небесная пища — символ пути каждого еврея через пустыню жизни. Никто не был оставлен.' },
-      { term: 'גְּאוּלָה · Геула', def: 'Избавление для всего Израиля во всех поколениях.' }
+      glossaryItem('שַׁבָּת', s.glossary[0]),
+      glossaryItem('מָן', s.glossary[1]),
+      glossaryItem('גְּאוּלָה', s.glossary[2])
     ])}
-
-    ${footerCredit()}
-  `;
+    ${footerCredit()}`;
 }
 
-// ===== SCREEN 8: FINAL =====
 function renderFinal(el) {
+  const s = screenText('final');
+  const hs = src().final;
   el.innerHTML = `
     <div class="rebbe-portrait">✡</div>
-
-    <div class="hebrew-title" style="font-size:2rem;">כ"ק אדמו"ר</div>
-    <div class="russian-subtitle">Любавичский Ребе זי"ע</div>
-    <div class="rebbe-credit">רבי מנחם מנדל שניאורסון · שיחת בהעלתך תשנ"א</div>
-
+    <div class="hebrew-title" style="font-size:2rem;">${hs.titleHe}</div>
+    <div class="russian-subtitle">${s.subtitle}</div>
+    <div class="rebbe-credit">${hs.rebbeHe}</div>
     ${divider()}
-
-    <div class="quote-block">
-      <div class="quote-hebrew">הַדּוֹר הָאַחֲרוֹן שֶׁל הַגָּלוּת הוּא הַדּוֹר הָרִאשׁוֹן שֶׁל הַגְּאוּלָה — הַגְּאוּלָה לְכָל יִשְׂרָאֵל בְּכָל הַדּוֹרוֹת</div>
-      <div class="quote-russian">«Последнее поколение изгнания — это первое поколение Избавления — Избавления для всего Израиля во всех поколениях»</div>
-      <div class="quote-source">Ребе, Шабес Беаалотха, 19 Сивана 5751 · Ликутей Сихот том 39</div>
-    </div>
-
-    <div class="quote-block">
-      <div class="quote-hebrew">לַעֲמוֹד מוּכָנִים כּוּלְּכֶם לְקַבֵּל פְּנֵי מָשִׁיחַ צִדְקֵנוּ</div>
-      <div class="quote-russian">«Стоять готовыми — все вы — встретить нашего праведного Мошиаха»</div>
-      <div class="quote-source">Ребе, там же · финальные слова сихи</div>
-    </div>
-
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
     ${divider()}
-
-    <div class="body-text" style="text-align:center;font-size:1.1rem;">
-      Что <strong>ты</strong> можешь сделать сегодня,<br>чтобы приблизить это?
-    </div>
-
+    <div class="body-text final-prompt">${s.prompt}</div>
     <div class="choices" id="finalChoices">
-      <button class="choice-btn" onclick="finalChoice(this, 0)">📖 Выучить урок Торы — даже пять минут</button>
-      <button class="choice-btn" onclick="finalChoice(this, 1)">🤝 Сделать доброе дело — <span style="font-family:'Noto Serif Hebrew',serif">גְּמִילוּת חֲסָדִים</span></button>
-      <button class="choice-btn" onclick="finalChoice(this, 2)">💬 Рассказать другу о том, что узнал сегодня</button>
+      ${s.choices.map((choice, idx) => `<button class="choice-btn" onclick="finalChoice(this, ${idx})">${choice}</button>`).join('')}
     </div>
-
     <div id="finalFeedback" class="hidden"></div>
-
-    <div id="restartDiv" class="hidden" style="text-align:center;margin-top:20px;">
-      <button class="btn-secondary" onclick="renderScreen(0)">← На главную</button>
-    </div>
-
+    <div id="restartDiv" class="hidden" style="text-align:center;margin-top:20px;"><button class="btn-secondary" onclick="renderScreen(0)">${s.restart}</button></div>
     ${divider()}
-
-    <div style="text-align:center;direction:ltr;margin-top:16px;">
-      <div style="font-family:'Noto Serif Hebrew',serif;font-size:1.1rem;color:var(--gold-deep);">יְחִי אֲדוֹנֵנוּ מוֹרֵנוּ וְרַבֵּנוּ מֶלֶךְ הַמָּשִׁיחַ לְעוֹלָם וָעֶד</div>
-    </div>
-
+    <div style="text-align:center;direction:ltr;margin-top:16px;"><div style="font-family:'Noto Serif Hebrew',serif;font-size:1.1rem;color:var(--gold-deep);">${hs.chantHe}</div></div>
     ${chapterGlossary([
-      { term: 'גְּאוּלָה · Геула', def: 'Избавление — приход Мошиаха. Ребе: «Последнее поколение изгнания — первое поколение Геулы».' },
-      { term: 'תְּשׁוּבָה · Тшува', def: '«Сразу за тшувой — Геула». Тшува — ключ к Избавлению.' },
-      { term: 'מָן · Ман', def: 'Духовная пища, которая питала каждого еврея. Урок: Б-г не оставляет никого.' }
+      glossaryItem('גְּאוּלָה', s.glossary[0]),
+      glossaryItem('תְּשׁוּבָה', s.glossary[1]),
+      glossaryItem('מָן', s.glossary[2])
     ])}
-
-    ${footerCredit()}
-  `;
+    ${footerCredit()}`;
 }
 
 function finalChoice(btn, idx) {
+  const s = screenText('final');
   document.querySelectorAll('#finalChoices .choice-btn').forEach(b => { b.disabled = true; });
   btn.classList.add('selected');
-
-  const messages = [
-    { heb: 'תַּלְמוּד תּוֹרָה כְּנֶגֶד כֻּלָּם', ru: '«Изучение Торы равно всем заповедям» (Пеа 1:1) — каждая минута учёбы приближает Геулу.' },
-    { heb: 'וְאָהַבְתָּ לְרֵעֲךָ כָּמוֹךָ', ru: '«Люби ближнего, как самого себя» (Ваикра 19:18) — Ребе говорил: это основа всей Торы.' },
-    { heb: 'הֱיוֹ מַפִּיצִים מַעְיְנוֹתָיו חוּצָה', ru: '«Распространяйте Его источники вовне» — Баал Шем Тов о распространении хасидского учения.' }
+  const hebrew = [
+    'תַּלְמוּד תּוֹרָה כְּנֶגֶד כֻּלָּם',
+    'וְאָהַבְתָּ לְרֵעֲךָ כָּמוֹךָ',
+    'הֱיוֹ מַפִּיצִים מַעְיְנוֹתָיו חוּצָה'
   ];
-
-  const m = messages[idx];
   const fb = document.getElementById('finalFeedback');
-  fb.innerHTML = `<div class="feedback-box">
-    <div class="hebrew">${m.heb}</div>
-    <div class="translation">${m.ru}</div>
-    <div class="source">Благодарим за прохождение игры · По сихе Любавичского Ребе זי"ע, Беаалотха 5751</div>
-  </div>`;
+  fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${hebrew[idx]}</div><div class="translation">${s.feedback[idx]}</div><div class="source">${s.feedbackSource}</div></div>`;
   fb.classList.remove('hidden');
   document.getElementById('restartDiv').classList.remove('hidden');
 }
+window.finalChoice = finalChoice;
 
-// ===== TOOLTIP SYSTEM =====
 (function () {
   const bubble = document.getElementById('tooltipBubble');
-  let hideTimer, arrowLeft = '50%';
-
+  let hideTimer;
   function positionAndShow(term) {
     clearTimeout(hideTimer);
     const tip = term.dataset.tip || '';
     const heb = term.dataset.tipHeb || '';
     if (!tip && !heb) return;
-
-    bubble.innerHTML =
-      '<div class="tooltip-arrow" id="tooltipArrow"></div>' +
-      (heb ? '<span class="tooltip-heb">' + heb + '</span>' : '') +
-      (tip ? '<span class="tooltip-def">' + tip + '</span>' : '');
-
-    // Layout bubble off-screen first to measure
+    bubble.innerHTML = '<div class="tooltip-arrow"></div>' + (heb ? '<span class="tooltip-heb">' + heb + '</span>' : '') + (tip ? '<span class="tooltip-def">' + tip + '</span>' : '');
     bubble.style.visibility = 'hidden';
     bubble.style.opacity = '0';
     bubble.style.left = '0px';
     bubble.style.top = '-9999px';
     bubble.classList.add('visible');
-
     const bw = bubble.offsetWidth;
     const bh = bubble.offsetHeight;
     bubble.style.visibility = '';
-
     const rect = term.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
-
-    // Horizontal: center on term, clamp inside viewport
     let x = cx - bw / 2;
     x = Math.max(8, Math.min(window.innerWidth - bw - 8, x));
-
-    // Arrow position relative to bubble
     const arrX = Math.max(10, Math.min(bw - 16, cx - x));
-
     const arrowEl = bubble.querySelector('.tooltip-arrow');
     arrowEl.style.left = arrX + 'px';
-
-    // Vertical: prefer above, fall back to below
     let y;
     if (rect.top - bh - 14 >= 8) {
       y = rect.top - bh - 14;
@@ -955,26 +797,20 @@ function finalChoice(btn, idx) {
       y = rect.bottom + 10;
       arrowEl.className = 'tooltip-arrow up';
     }
-
     bubble.style.left = x + 'px';
     bubble.style.top = y + 'px';
   }
-
   function hideBubble() {
     hideTimer = setTimeout(() => bubble.classList.remove('visible'), 90);
   }
-
-  // Mouse
-  document.addEventListener('mouseover', function (e) {
+  document.addEventListener('mouseover', e => {
     const t = e.target.closest('.term[data-tip],.term[data-tip-heb]');
     if (t) positionAndShow(t);
   });
-  document.addEventListener('mouseout', function (e) {
+  document.addEventListener('mouseout', e => {
     if (e.target.closest('.term')) hideBubble();
   });
-
-  // Touch: tap to toggle
-  document.addEventListener('touchend', function (e) {
+  document.addEventListener('touchend', e => {
     const t = e.target.closest('.term[data-tip],.term[data-tip-heb]');
     if (t) {
       e.preventDefault();
@@ -985,132 +821,4 @@ function finalChoice(btn, idx) {
   }, { passive: false });
 })();
 
-// ===== AUDIO SYSTEM =====
-var _audioCtx = null;
-var _audioMaster = null;
-var _audioPlaying = false;
-
-function toggleAudio() {
-  var btn = document.getElementById('audioBtn');
-  if (!_audioCtx) {
-    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    _buildAmbient();
-    _audioPlaying = true;
-  } else {
-    _audioPlaying = !_audioPlaying;
-  }
-
-  var now = _audioCtx.currentTime;
-  _audioMaster.gain.cancelScheduledValues(now);
-  _audioMaster.gain.setValueAtTime(_audioMaster.gain.value, now);
-
-  if (_audioPlaying) {
-    _audioCtx.resume();
-    _audioMaster.gain.linearRampToValueAtTime(1, now + 2.5);
-    btn.querySelector('.a-icon').textContent = '🔊';
-    btn.classList.add('playing');
-  } else {
-    _audioMaster.gain.linearRampToValueAtTime(0, now + 1.8);
-    btn.querySelector('.a-icon').textContent = '🔇';
-    btn.classList.remove('playing');
-  }
-}
-
-function _buildAmbient() {
-  var ctx = _audioCtx;
-  _audioMaster = ctx.createGain();
-  _audioMaster.gain.setValueAtTime(0, ctx.currentTime);
-
-  var comp = ctx.createDynamicsCompressor();
-  comp.threshold.setValueAtTime(-24, ctx.currentTime);
-  comp.ratio.setValueAtTime(4, ctx.currentTime);
-  comp.connect(_audioMaster);
-  _audioMaster.connect(ctx.destination);
-
-  // Drone — A minor chord: A2 E3 A3 E4 with micro-detuning
-  [[110, 0.055], [165, 0.038], [220, 0.028], [330, 0.014], [440, 0.008]].forEach(function (pair) {
-    var freq = pair[0], amp = pair[1];
-    var osc = ctx.createOscillator();
-    var g = ctx.createGain();
-    // Micro-detune each oscillator for natural beating
-    osc.frequency.setValueAtTime(freq * (1 + (Math.random() - 0.5) * 0.003), ctx.currentTime);
-    osc.type = 'sine';
-    g.gain.setValueAtTime(amp, ctx.currentTime);
-
-    // Slow LFO tremolo
-    var lfo = ctx.createOscillator();
-    var lfoG = ctx.createGain();
-    lfo.frequency.setValueAtTime(0.08 + Math.random() * 0.18, ctx.currentTime);
-    lfoG.gain.setValueAtTime(amp * 0.25, ctx.currentTime);
-    lfo.connect(lfoG);
-    lfoG.connect(g.gain);
-    lfo.start();
-
-    osc.connect(g);
-    g.connect(comp);
-    osc.start();
-  });
-
-  // Desert wind: filtered white noise
-  var bufLen = ctx.sampleRate * 3;
-  var noiseBuf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-  var nd = noiseBuf.getChannelData(0);
-  for (var i = 0; i < bufLen; i++) nd[i] = Math.random() * 2 - 1;
-
-  var noiseSrc = ctx.createBufferSource();
-  noiseSrc.buffer = noiseBuf;
-  noiseSrc.loop = true;
-
-  var windFilt = ctx.createBiquadFilter();
-  windFilt.type = 'bandpass';
-  windFilt.frequency.setValueAtTime(380, ctx.currentTime);
-  windFilt.Q.setValueAtTime(0.45, ctx.currentTime);
-
-  var windG = ctx.createGain();
-  windG.gain.setValueAtTime(0.038, ctx.currentTime);
-
-  // Slow wind swell LFO
-  var wLfo = ctx.createOscillator();
-  var wLfoG = ctx.createGain();
-  wLfo.frequency.setValueAtTime(0.04, ctx.currentTime);
-  wLfoG.gain.setValueAtTime(0.022, ctx.currentTime);
-  wLfo.connect(wLfoG);
-  wLfoG.connect(windG.gain);
-  wLfo.start();
-
-  noiseSrc.connect(windFilt);
-  windFilt.connect(windG);
-  windG.connect(comp);
-  noiseSrc.start();
-
-  // Schedule occasional soft bell tones
-  _scheduleBell();
-}
-
-function _scheduleBell() {
-  var delay = 10000 + Math.random() * 22000;
-  setTimeout(function () {
-    if (!_audioCtx || !_audioMaster) return;
-    if (_audioPlaying) {
-      var ctx = _audioCtx;
-      var bellFreqs = [528, 660, 792, 880, 1056];
-      var freq = bellFreqs[Math.floor(Math.random() * bellFreqs.length)];
-      var osc = ctx.createOscillator();
-      var env = ctx.createGain();
-      var now = ctx.currentTime;
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-      env.gain.setValueAtTime(0, now);
-      env.gain.linearRampToValueAtTime(0.06, now + 0.015);
-      env.gain.exponentialRampToValueAtTime(0.0001, now + 4);
-      osc.connect(env);
-      env.connect(_audioMaster);
-      osc.start(now);
-      osc.stop(now + 4.5);
-    }
-    _scheduleBell();
-  }, delay);
-}
-
-// ===== START =====
 init();
