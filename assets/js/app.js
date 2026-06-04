@@ -12,6 +12,7 @@ window.state = state;
 
 // ===== SCREENS =====
 const screens = [
+  renderHome,
   renderIntro,
   renderDay1,
   renderDay2,
@@ -118,7 +119,41 @@ function spawnManna(count, xRange) {
   }, 500);
 }
 
-// ===== SCREEN 0: INTRO =====
+// ===== SCREEN 0: HOME =====
+function renderHome(el) {
+  el.innerHTML = `
+    <div class="home-eyebrow">הָעִיקָּר הַשְּׁנֵים עָשָׂר · 12-й принцип веры</div>
+
+    <div class="hebrew-title">מַאֲמִין בֶּאֱמוּנָה שְׁלֵמָה</div>
+    <div class="russian-subtitle">Верю полной верой в приход Мошиаха</div>
+    <div class="rebbe-credit">מַאֲמִין בֶּאֱמוּנָה שְׁלֵמָה בְּבִיאַת הַמָּשִׁיחַ</div>
+
+    ${divider()}
+
+    <div class="motto-block">
+      <div class="motto-heb">מִצְוָה גְּדוֹלָה לִהְיוֹת בְּשִׂמְחָה תָּמִיד</div>
+      <div class="motto-rus">«Велика заповедь быть в радости всегда»</div>
+    </div>
+
+    ${divider()}
+
+    <div class="chapters-label">Главы · פָּרָשִׁיּוֹת</div>
+
+    <div class="chapter-list">
+      <div class="chapter-card" onclick="renderScreen(1)">
+        <div class="chapter-card-heb">בְּהַעֲלֹתְךָ</div>
+        <div class="chapter-card-rus">Беалотха</div>
+        <div class="chapter-card-desc">Ман с Небес — интерактивный путь сквозь пустыню. По сихе Любавичского Ребе, 19 Сивана 5751.</div>
+        <div class="chapter-card-footer">
+          <span class="chapter-card-meta">7 дней · Ликутей Сихот, т. 39</span>
+          <span class="chapter-card-enter">Войти →</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ===== SCREEN 1: INTRO =====
 function renderIntro(el) {
   el.innerHTML = `
     <div class="hebrew-title">מָן מִן הַשָּׁמַיִם</div>
@@ -766,7 +801,7 @@ function renderFinal(el) {
     <div id="finalFeedback" class="hidden"></div>
 
     <div id="restartDiv" class="hidden" style="text-align:center;margin-top:20px;">
-      <button class="btn-secondary" onclick="renderScreen(0)">Пройти снова ↺</button>
+      <button class="btn-secondary" onclick="renderScreen(0)">← На главную</button>
     </div>
 
     ${divider()}
