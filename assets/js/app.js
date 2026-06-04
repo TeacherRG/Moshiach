@@ -1,5 +1,16 @@
 const CONTENT = window.MoshiachContent;
 
+function detectLang() {
+  const saved = localStorage.getItem('moshiach-lang');
+  if (saved && CONTENT.translations[saved]) return saved;
+  const langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'ru'];
+  for (const l of langs) {
+    const code = l.split('-')[0].toLowerCase();
+    if (CONTENT.translations[code]) return code;
+  }
+  return 'ru';
+}
+
 const state = {
   day: 0,
   soulLevel: 3,
@@ -7,7 +18,7 @@ const state = {
   journalEntries: [],
   sortScore: 0,
   scaleValue: 50,
-  lang: localStorage.getItem('moshiach-lang') || 'ru'
+  lang: detectLang()
 };
 window.state = state;
 
@@ -192,7 +203,7 @@ function spawnManna(count, xRange) {
   }, 500);
 }
 
-const _chapterOpen = [true];
+const _chapterOpen = [false];
 
 function renderMenu() {
   const common = tr().common;
@@ -313,10 +324,6 @@ function renderHome(el) {
       <div class="motto-rus">${s.motto}</div>
     </div>
     ${divider()}
-    <div class="project-about" id="projectAbout">
-      <div class="project-about-badge">${tr().common.aboutBadge}</div>
-      <div class="project-about-text">${tr().common.menuAboutText}</div>
-    </div>
     <div class="chapters-label">${s.chaptersLabel} · פָּרָשִׁיּוֹת</div>
     <div class="chapter-list">
       <div class="chapter-card" onclick="renderScreen(1)">
