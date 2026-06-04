@@ -1300,40 +1300,107 @@ function renderDay5(el) {
 
     ${divider()}
 
-    <div class="body-text"><strong>Запасаем ман на Шабос:</strong> в пятницу нужно было собрать двойную порцию. Нажимай, чтобы собрать!</div>
+    <div class="body-text"><strong>Головоломка:</strong> каждый день в пустыне падал ман. Расставь правильное количество порций по дням недели — нажимай на клетку, чтобы изменить.</div>
 
-    <div style="text-align:center;margin:20px 0;">
-      <div id="mannaCount" style="font-size:2rem;margin-bottom:12px;">🌾 × 0</div>
-      <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;" id="mannaCollect">
-        ${Array(12).fill(0).map((_,i) => `<button onclick="collectManna(this)" style="font-size:1.5rem;background:none;border:1.5px solid var(--sand-dark);border-radius:4px;padding:10px;cursor:pointer;transition:all 0.2s;" class="manna-collect-btn">✨</button>`).join('')}
-      </div>
-      <div id="mannaResult" style="margin-top:14px;font-style:italic;color:var(--text-mid);font-size:0.95rem;"></div>
+    <div id="mannaGrid" style="margin:20px 0;"></div>
+
+    <div id="mannaStatus" style="text-align:center;color:var(--text-mid);font-size:0.9rem;margin:8px 0 16px;">Распределено порций: 0 / 7</div>
+
+    <div style="text-align:center;margin-bottom:16px;">
+      <button onclick="checkMannaDistribution()" style="background:var(--gold-deep);color:var(--white);border:none;padding:10px 28px;font-family:'Cormorant Garamond',serif;font-size:1rem;border-radius:3px;cursor:pointer;letter-spacing:0.03em;">Проверить →</button>
     </div>
 
-    <button class="btn-primary" onclick="next()">К Шабосу →</button>
+    <div id="mannaResult" class="hidden"></div>
+    <div id="mannaBtn" class="hidden">
+      <button class="btn-primary" onclick="next()">К Шабосу →</button>
+    </div>
 
     ${footerCredit()}
   `;
 
-  window._mannaCollected = 0;
+  window._mannaDays = [0, 0, 0, 0, 0, 0, 0];
+  _renderMannaGrid();
 }
 
-function collectManna(btn) {
-  if (btn.disabled) return;
-  btn.disabled = true;
-  btn.style.background = 'rgba(201,146,42,0.2)';
-  btn.style.borderColor = 'var(--gold)';
-  btn.textContent = '✦';
-  window._mannaCollected++;
-  document.getElementById('mannaCount').textContent = `✦ × ${window._mannaCollected}`;
+function _renderMannaGrid() {
+  const dayNames = [
+    { heb: 'יום א\'', ru: 'Воскр.' },
+    { heb: 'יום ב\'', ru: 'Понед.' },
+    { heb: 'יום ג\'', ru: 'Вторн.' },
+    { heb: 'יום ד\'', ru: 'Среда' },
+    { heb: 'יום ה\'', ru: 'Четв.' },
+    { heb: 'עֶרֶב שַׁבָּת', ru: 'Пятн.' },
+    { heb: 'שַׁבָּת', ru: 'Шабос' },
+  ];
+  const grid = document.getElementById('mannaGrid');
+  if (!grid) return;
+  const portions = window._mannaDays;
+  const total = portions.reduce((a, b) => a + b, 0);
+  grid.innerHTML = `
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;direction:ltr;">
+      ${dayNames.map((day, i) => {
+        const isShabbat = i === 6;
+        const count = portions[i];
+        const icons = count === 0
+          ? (isShabbat ? '<span style="font-size:1.1rem;">✡</span>' : '<span style="color:var(--sand-dark);font-size:1.3rem;">·</span>')
+          : '🌾'.repeat(count);
+        return `
+          <div onclick="${isShabbat ? '' : `mannaClickDay(${i})`}"
+               style="
+                 width:80px;min-height:100px;
+                 background:${isShabbat ? 'rgba(26,37,53,0.07)' : 'rgba(201,146,42,0.06)'};
+                 border:1.5px solid ${isShabbat ? 'var(--night-mid)' : 'var(--gold)'};
+                 border-radius:4px;padding:10px 4px 8px;
+                 text-align:center;
+                 cursor:${isShabbat ? 'default' : 'pointer'};
+                 transition:background 0.15s;
+                 user-select:none;
+                 ${!isShabbat && count > 0 ? 'background:rgba(201,146,42,0.14);' : ''}
+               ">
+            <div style="font-family:'Noto Serif Hebrew',serif;font-size:0.72rem;color:${isShabbat ? 'var(--night-mid)' : 'var(--gold-deep)'};margin-bottom:3px;line-height:1.2;">${day.heb}</div>
+            <div style="font-size:0.68rem;color:var(--text-mid);margin-bottom:8px;">${day.ru}</div>
+            <div style="font-size:1.25rem;min-height:28px;line-height:1.4;">${icons}</div>
+            <div style="font-size:0.62rem;color:var(--text-light);margin-top:6px;">${isShabbat ? 'покой' : (count === 0 ? 'нажми' : count + ' порц.')}</div>
+          </div>`;
+      }).join('')}
+    </div>`;
+  const statusEl = document.getElementById('mannaStatus');
+  if (statusEl) statusEl.textContent = `Распределено порций: ${total} / 7`;
+}
 
+function mannaClickDay(i) {
+  if (i === 6) return;
+  window._mannaDays[i] = (window._mannaDays[i] + 1) % 3;
+  _renderMannaGrid();
   const resultEl = document.getElementById('mannaResult');
-  if (window._mannaCollected >= 12) {
-    resultEl.innerHTML = '<strong style="color:var(--gold-deep)">Отлично! Двойная порция собрана. Шабос будет благословлён! ✡</strong>';
-  } else if (window._mannaCollected >= 6) {
-    resultEl.textContent = 'Уже достаточно для обычного дня... но Шабос требует больше!';
+  if (resultEl && !resultEl.classList.contains('hidden')) {
+    resultEl.classList.add('hidden');
+  }
+}
+
+function checkMannaDistribution() {
+  const correct = [1, 1, 1, 1, 1, 2, 0];
+  const current = window._mannaDays;
+  const allCorrect = correct.every((v, i) => v === current[i]);
+  const resultEl = document.getElementById('mannaResult');
+
+  if (allCorrect) {
+    resultEl.innerHTML = `
+      <div class="feedback-box">
+        <div class="hebrew">הַשַׁבָּת — מְקוֹר הַבְּרָכָה לְכָל יְמֵי הַשָּׁבוּעַ</div>
+        <div class="translation">Верно! Шабос — источник благословения для всех дней недели.</div>
+        <div class="source">Вот парадокс: Шабос сам не «получает» ман — но именно он даёт жизнь всем остальным дням. Тот, кто поднялся выше получения, становится источником для всех.</div>
+      </div>`;
+    resultEl.classList.remove('hidden');
+    document.getElementById('mannaBtn').classList.remove('hidden');
   } else {
-    resultEl.textContent = 'Продолжай собирать...';
+    const dayLabels = ['воскресенье', 'понедельник', 'вторник', 'среду', 'четверг', 'пятницу', 'Шабос'];
+    const wrong = correct.map((v, i) => v !== current[i] ? dayLabels[i] : null).filter(Boolean);
+    resultEl.innerHTML = `
+      <div style="text-align:center;color:var(--red-accent);font-size:0.9rem;padding:12px 16px;background:rgba(139,32,32,0.06);border-radius:4px;border:1px solid rgba(139,32,32,0.15);">
+        Не совсем верно. Подсказка: проверь ${wrong.join(', ')}.
+      </div>`;
+    resultEl.classList.remove('hidden');
   }
 }
 
