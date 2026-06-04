@@ -54,6 +54,7 @@ function renderScreen(index) {
     document.getElementById('mainCard').style.animation = 'fadeIn 0.6s ease forwards';
   }, 10);
   screens[index](content);
+  if (window.AudioQuest) AudioQuest.onScreenChange(index);
 }
 
 function next() {
