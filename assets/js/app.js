@@ -23,16 +23,24 @@ const state = {
 window.state = state;
 
 const screens = [
-  renderHome,
-  renderIntro,
-  renderDay1,
-  renderDay2,
-  renderDay3,
-  renderDay4,
-  renderDay5,
-  renderDay6,
-  renderShabbat,
-  renderFinal
+  renderHome,      // 0
+  renderIntro,     // 1
+  renderDay1,      // 2
+  renderDay2,      // 3
+  renderDay3,      // 4
+  renderDay4,      // 5
+  renderDay5,      // 6
+  renderDay6,      // 7
+  renderShabbat,   // 8
+  renderFinal,     // 9
+  renderIntro2,    // 10
+  renderC2Q1,      // 11
+  renderC2Q2,      // 12
+  renderC2Q3,      // 13
+  renderC2Q4,      // 14
+  renderC2Q5,      // 15
+  renderC2Q6,      // 16
+  renderC2Final    // 17
 ];
 
 function tr() {
@@ -203,11 +211,12 @@ function spawnManna(count, xRange) {
   }, 500);
 }
 
-const _chapterOpen = [false];
+const _chapterOpen = [false, false];
 
 function renderMenu() {
   const common = tr().common;
   const sections = tr().sections;
+  const sections2 = tr().sections2 || [];
   const button = document.getElementById('menuToggleBtn');
   const panel = document.getElementById('topMenuPanel');
   const aboutBtn = document.getElementById('menuAboutBtn');
@@ -222,23 +231,38 @@ function renderMenu() {
   ruBtn.classList.toggle('active', state.lang === 'ru');
   deBtn.classList.toggle('active', state.lang === 'de');
 
-  const subsections = [{ label: sections[0], screen: 0 }].concat(
+  const subsections1 = [{ label: sections[0], screen: 0 }].concat(
     sections.slice(2).map((label, i) => ({ label, screen: i + 1 }))
   );
 
-  const chapterTitle = tr().screens.home.chapterTitle;
+  const subsections2 = sections2.map((label, i) => ({ label, screen: 10 + i }));
+
+  const homeScreenData = tr().screens.home;
   const chapterHe = src().home.chapterHe;
-  const isOpen = _chapterOpen[0];
+  const chapter2He = src().home.chapter2He;
 
   chaptersList.innerHTML = `
     <div class="menu-chapter-item">
-      <button class="menu-chapter-header${isOpen ? ' open' : ''}" id="chapterHeader0" onclick="toggleChapterMenu(0)" type="button">
+      <button class="menu-chapter-header${_chapterOpen[0] ? ' open' : ''}" id="chapterHeader0" onclick="toggleChapterMenu(0)" type="button">
         <span class="menu-chapter-he">${chapterHe}</span>
-        <span class="menu-chapter-title">${chapterTitle}</span>
+        <span class="menu-chapter-title">${homeScreenData.chapterTitle}</span>
         <span class="menu-chapter-arrow">▾</span>
       </button>
-      <div class="menu-chapter-subs${isOpen ? ' open' : ''}" id="chapterSubs0">
-        ${subsections.map(sub => {
+      <div class="menu-chapter-subs${_chapterOpen[0] ? ' open' : ''}" id="chapterSubs0">
+        ${subsections1.map(sub => {
+          const active = sub.screen === state.day ? ' active' : '';
+          return `<button class="menu-sub-link${active}" onclick="menuNavigate(${sub.screen})" type="button">${sub.label}</button>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="menu-chapter-item">
+      <button class="menu-chapter-header${_chapterOpen[1] ? ' open' : ''}" id="chapterHeader1" onclick="toggleChapterMenu(1)" type="button">
+        <span class="menu-chapter-he">${chapter2He}</span>
+        <span class="menu-chapter-title">${homeScreenData.chapter2Title}</span>
+        <span class="menu-chapter-arrow">▾</span>
+      </button>
+      <div class="menu-chapter-subs${_chapterOpen[1] ? ' open' : ''}" id="chapterSubs1">
+        ${subsections2.map(sub => {
           const active = sub.screen === state.day ? ' active' : '';
           return `<button class="menu-sub-link${active}" onclick="menuNavigate(${sub.screen})" type="button">${sub.label}</button>`;
         }).join('')}
@@ -332,6 +356,15 @@ function renderHome(el) {
         <div class="chapter-card-desc">${s.chapterDescription}</div>
         <div class="chapter-card-footer">
           <span class="chapter-card-meta">${s.chapterMeta}</span>
+          <span class="chapter-card-enter">${s.enter}</span>
+        </div>
+      </div>
+      <div class="chapter-card chapter-card-2" onclick="renderScreen(10)">
+        <div class="chapter-card-heb">${hs.chapter2He}</div>
+        <div class="chapter-card-rus">${s.chapter2Title}</div>
+        <div class="chapter-card-desc">${s.chapter2Description}</div>
+        <div class="chapter-card-footer">
+          <span class="chapter-card-meta">${s.chapter2Meta}</span>
           <span class="chapter-card-enter">${s.enter}</span>
         </div>
       </div>
@@ -794,6 +827,500 @@ function finalChoice(btn, idx) {
   document.getElementById('restartDiv').classList.remove('hidden');
 }
 window.finalChoice = finalChoice;
+
+// ─── Chapter 2 helpers ────────────────────────────────────────────────────────
+
+function c2dots(current) {
+  let html = '<div class="day-indicator">';
+  for (let i = 1; i <= 6; i++) {
+    const cls = i < current ? 'done' : i === current ? 'active' : '';
+    html += `<div class="day-dot ${cls}" title="${i}"></div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+// ─── renderIntro2 ─────────────────────────────────────────────────────────────
+
+function renderIntro2(el) {
+  const s = screenText('intro2');
+  const hs = src().intro2;
+  el.innerHTML = `
+    <div class="hebrew-title" style="font-size:1.6rem;">${hs.titleHe}</div>
+    <div class="russian-subtitle">${s.subtitle}</div>
+    ${divider()}
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text">${s.body1}</div>
+    ${divider()}
+    <table class="souls-table">
+      <thead><tr>${s.tableHead.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+      <tbody>
+        ${s.tableRows.map(row => `<tr><td>${row[0]}</td><td class="heb">${row[1]}</td><td>${row[2]}</td></tr>`).join('')}
+      </tbody>
+    </table>
+    <button class="btn-primary" onclick="next()">${s.next}</button>
+    ${chapterGlossary([
+      glossaryItem(src().c2q1.menorahHe, s.glossary[0]),
+      glossaryItem(src().c2q2.pesachSheniHe, s.glossary[1]),
+      glossaryItem(src().c2q4.chatzotzerotHe, s.glossary[2])
+    ])}
+    ${footerCredit()}`;
+}
+
+// ─── renderC2Q1: Menorah Math ─────────────────────────────────────────────────
+
+function renderC2Q1(el) {
+  const s = screenText('c2q1');
+  const hs = src().c2q1;
+  el.innerHTML = `
+    ${progressBar(1, 6)}
+    ${c2dots(1)}
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text">${s.body1}</div>
+    ${quoteBlock(hs.quote2He, s.quote2, '8:4')}
+    <div class="body-text"><strong>${s.revealPrompt}</strong></div>
+    <div class="c2-reveal-row" id="c2q1reveals">
+      ${s.reveals.map((r, i) => `
+        <div class="c2-reveal-box" id="reveal${i}" onclick="c2q1Reveal(${i})">
+          <div class="c2-reveal-number">${r.number}</div>
+          <div class="c2-reveal-he">${r.he}</div>
+          <div class="c2-reveal-hint">нажми ▼</div>
+        </div>`).join('')}
+    </div>
+    <div id="c2q1revealText" class="hidden" style="margin:12px 0;"></div>
+    ${divider()}
+    <div id="c2q1quiz" class="hidden">
+      <div class="reflection-question">${s.quizQuestion}</div>
+      <div class="choices" id="c2q1quizChoices">
+        ${s.quizOptions.map((opt, i) => `<button class="choice-btn" onclick="c2q1Quiz(${i})">${opt}</button>`).join('')}
+      </div>
+      <div id="c2q1quizFb" class="hidden"></div>
+      <div id="c2q1btn" class="hidden"><button class="btn-primary" onclick="next()">${s.next}</button></div>
+    </div>
+    ${chapterGlossary([
+      glossaryItem(hs.menorahHe, s.glossary[0]),
+      glossaryItem('גִּימַטְרִיָּה', s.glossary[1]),
+      glossaryItem(hs.gavrielHe, s.glossary[2])
+    ])}
+    ${footerCredit()}`;
+  window._c2q1revealed = 0;
+}
+
+function c2q1Reveal(i) {
+  const s = screenText('c2q1');
+  const box = document.getElementById(`reveal${i}`);
+  if (box.classList.contains('opened')) return;
+  box.classList.add('opened');
+  box.innerHTML = `
+    <div class="c2-reveal-number">${s.reveals[i].number}</div>
+    <div class="c2-reveal-he">${s.reveals[i].he}</div>
+    <div class="c2-reveal-open-title">${s.reveals[i].title}</div>
+    <div class="c2-reveal-open-text">${s.reveals[i].text}</div>`;
+  window._c2q1revealed++;
+  if (window._c2q1revealed >= s.reveals.length) {
+    document.getElementById('c2q1quiz').classList.remove('hidden');
+  }
+}
+window.c2q1Reveal = c2q1Reveal;
+
+function c2q1Quiz(idx) {
+  const s = screenText('c2q1');
+  const hs = src().c2q1;
+  document.querySelectorAll('#c2q1quizChoices .choice-btn').forEach(b => { b.disabled = true; });
+  document.querySelectorAll('#c2q1quizChoices .choice-btn')[idx].classList.add('selected');
+  const fb = document.getElementById('c2q1quizFb');
+  if (idx === s.quizAnswer) {
+    fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${hs.successHe}</div><div class="translation">${s.quizFeedback}</div></div>`;
+  } else {
+    fb.innerHTML = `<div class="feedback-box"><div class="translation">${s.quizFeedback}</div></div>`;
+  }
+  fb.classList.remove('hidden');
+  document.getElementById('c2q1btn').classList.remove('hidden');
+}
+window.c2q1Quiz = c2q1Quiz;
+
+// ─── renderC2Q2: Pesach Sheni ─────────────────────────────────────────────────
+
+function renderC2Q2(el) {
+  const s = screenText('c2q2');
+  const hs = src().c2q2;
+  el.innerHTML = `
+    ${progressBar(2, 6)}
+    ${c2dots(2)}
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text">${s.body1}</div>
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
+    <div class="body-text">${s.body2}</div>
+    ${divider()}
+    <div class="reflection-question">${s.choicePrompt}</div>
+    <div class="choices" id="c2q2choices">
+      ${s.choices.map((c, i) => `<button class="choice-btn" onclick="c2q2Choice(${i})">${c}</button>`).join('')}
+    </div>
+    <div id="c2q2fb" class="hidden"></div>
+    <div id="c2q2insight" class="hidden">
+      <div class="body-text" style="background:rgba(201,146,42,0.07);border-left:3px solid var(--gold);padding:12px 16px;border-radius:4px;margin:16px 0;">${s.insight}</div>
+    </div>
+    <div id="c2q2btn" class="hidden"><button class="btn-primary" onclick="next()">${s.next}</button></div>
+    ${chapterGlossary([
+      glossaryItem(hs.pesachSheniHe, s.glossary[0]),
+      glossaryItem(hs.yosefHe, s.glossary[1]),
+      glossaryItem('כָּרֵת', s.glossary[2])
+    ])}
+    ${footerCredit()}`;
+}
+
+function c2q2Choice(idx) {
+  const s = screenText('c2q2');
+  const hs = src().c2q2;
+  document.querySelectorAll('#c2q2choices .choice-btn').forEach(b => { b.disabled = true; });
+  document.querySelectorAll('#c2q2choices .choice-btn')[idx].classList.add('selected');
+  const f = s.feedback[idx];
+  const fb = document.getElementById('c2q2fb');
+  fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${f.he}</div><div class="translation">${f.quote}</div><div class="source">${f.note}</div></div>`;
+  fb.classList.remove('hidden');
+  document.getElementById('c2q2insight').classList.remove('hidden');
+  document.getElementById('c2q2btn').classList.remove('hidden');
+}
+window.c2q2Choice = c2q2Choice;
+
+// ─── renderC2Q3: 70 Elders ────────────────────────────────────────────────────
+
+function renderC2Q3(el) {
+  const s = screenText('c2q3');
+  const hs = src().c2q3;
+  el.innerHTML = `
+    ${progressBar(3, 6)}
+    ${c2dots(3)}
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text">${s.body1}</div>
+    <div class="body-text"><strong>${s.connectPrompt}</strong></div>
+    <div class="c2-reveal-row" id="c2q3cards">
+      ${s.connections.map((c, i) => `
+        <div class="c2-reveal-box" id="conn${i}" onclick="c2q3Reveal(${i})">
+          <div class="c2-reveal-number">${c.number}</div>
+          <div style="font-size:1.5rem;">${c.icon}</div>
+          <div class="c2-reveal-he">${c.he}</div>
+          <div class="c2-reveal-hint">${c.label} ▼</div>
+        </div>`).join('')}
+    </div>
+    <div id="c2q3math" class="hidden">
+      ${divider()}
+      <div class="body-text"><strong>${s.mathQuestion}</strong></div>
+      <div class="choices" id="c2q3mathChoices">
+        ${s.mathOptions.map((opt, i) => `<button class="choice-btn" onclick="c2q3Math(${i})">${opt}</button>`).join('')}
+      </div>
+      <div id="c2q3mathFb" class="hidden"></div>
+      <div id="c2q3elderInsight" class="hidden">
+        <div class="body-text" style="background:rgba(201,146,42,0.07);border-left:3px solid var(--gold);padding:12px 16px;border-radius:4px;margin:12px 0;">
+          <div style="font-family:'Noto Serif Hebrew',serif;font-size:0.9rem;color:var(--gold-deep);margin-bottom:6px;">${hs.eldadHe}</div>
+          <div>${s.eldadInsight}</div>
+          <div style="margin-top:8px;font-style:italic;">${s.spiritNote}</div>
+        </div>
+      </div>
+      <div id="c2q3btn" class="hidden"><button class="btn-primary" onclick="next()">${s.next}</button></div>
+    </div>
+    ${chapterGlossary([
+      glossaryItem(hs.eldadHe, s.glossary[0]),
+      glossaryItem('שִׁבְעִים אֻמּוֹת', s.glossary[1]),
+      glossaryItem('רוּחַ הַקֹּדֶשׁ', s.glossary[2])
+    ])}
+    ${footerCredit()}`;
+  window._c2q3revealed = 0;
+}
+
+function c2q3Reveal(i) {
+  const s = screenText('c2q3');
+  const box = document.getElementById(`conn${i}`);
+  if (box.classList.contains('opened')) return;
+  box.classList.add('opened');
+  box.innerHTML = `
+    <div class="c2-reveal-number">${s.connections[i].number}</div>
+    <div style="font-size:1.5rem;">${s.connections[i].icon}</div>
+    <div class="c2-reveal-open-title">${s.connections[i].label}</div>
+    <div class="c2-reveal-open-text">${s.connections[i].text}</div>`;
+  window._c2q3revealed++;
+  if (window._c2q3revealed >= s.connections.length) {
+    document.getElementById('c2q3math').classList.remove('hidden');
+  }
+}
+window.c2q3Reveal = c2q3Reveal;
+
+function c2q3Math(idx) {
+  const s = screenText('c2q3');
+  const hs = src().c2q3;
+  document.querySelectorAll('#c2q3mathChoices .choice-btn').forEach(b => { b.disabled = true; });
+  document.querySelectorAll('#c2q3mathChoices .choice-btn')[idx].classList.add('selected');
+  const fb = document.getElementById('c2q3mathFb');
+  if (idx === s.mathAnswer) {
+    fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${hs.successHe}</div><div class="translation">${s.mathFeedback}</div></div>`;
+  } else {
+    const correct = s.mathOptions[s.mathAnswer];
+    fb.innerHTML = `<div class="feedback-error">Не совсем — ответ ${correct}. ${s.mathFeedback}</div>`;
+  }
+  fb.classList.remove('hidden');
+  document.getElementById('c2q3elderInsight').classList.remove('hidden');
+  document.getElementById('c2q3btn').classList.remove('hidden');
+}
+window.c2q3Math = c2q3Math;
+
+// ─── renderC2Q4: Trumpets ─────────────────────────────────────────────────────
+
+function renderC2Q4(el) {
+  const s = screenText('c2q4');
+  const hs = src().c2q4;
+  el.innerHTML = `
+    ${progressBar(4, 6)}
+    ${c2dots(4)}
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text">${s.body1}</div>
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
+    <div class="body-text">${s.body2}</div>
+    ${divider()}
+    <div class="body-text"><strong>${s.gameLead}</strong> ${s.gameText}</div>
+    <div class="sort-cards" id="c2q4sortCards">
+      ${s.sortData.map((item, i) => `<div class="sort-card" onclick="c2q4SelectCard(this, '${item.correct}', ${i})" data-correct="${item.correct}">${item.text}</div>`).join('')}
+    </div>
+    <div class="sort-container">
+      <div class="sort-zone" id="c2zone-yes" onclick="c2q4DropToZone('yes')">
+        <h4>${s.zoneYes}</h4><div id="c2yes-results"></div>
+      </div>
+      <div class="sort-zone" id="c2zone-no" onclick="c2q4DropToZone('no')">
+        <h4>${s.zoneNo}</h4><div id="c2no-results"></div>
+      </div>
+    </div>
+    <div id="c2q4fb" class="hidden"></div>
+    <div id="c2q4btn" class="hidden"><button class="btn-primary" onclick="next()">${s.next}</button></div>
+    ${chapterGlossary([
+      glossaryItem(hs.chatzotzerotHe, s.glossary[0]),
+      glossaryItem('גּוֹג וּמָגוֹג', s.glossary[1]),
+      glossaryItem('רֹאשׁ חֹדֶשׁ', s.glossary[2])
+    ])}
+    ${footerCredit()}`;
+  window._c2q4selected = null;
+  window._c2q4placed = 0;
+  window._c2q4total = s.sortData.length;
+}
+
+function c2q4SelectCard(el, correct, idx) {
+  document.querySelectorAll('#c2q4sortCards .sort-card').forEach(c => { c.style.outline = 'none'; });
+  el.style.outline = '2px solid var(--gold)';
+  window._c2q4selected = { el, correct };
+}
+window.c2q4SelectCard = c2q4SelectCard;
+
+function c2q4DropToZone(zone) {
+  const s = screenText('c2q4');
+  const hs = src().c2q4;
+  if (!window._c2q4selected) return;
+  const { el, correct } = window._c2q4selected;
+  el.classList.add('placed');
+  el.style.outline = 'none';
+  el.onclick = null;
+  const isCorrect = correct === zone;
+  window._c2q4placed++;
+  const result = document.createElement('div');
+  result.className = `sort-result ${isCorrect ? 'correct' : 'wrong'}`;
+  result.textContent = (isCorrect ? '✓ ' : '✗ ') + el.textContent;
+  document.getElementById('c2' + zone + '-results').appendChild(result);
+  window._c2q4selected = null;
+  if (window._c2q4placed >= window._c2q4total) {
+    const fb = document.getElementById('c2q4fb');
+    fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${hs.feedbackHe}</div><div class="translation">${s.feedback}</div><div class="source">${s.feedbackSource}</div></div>`;
+    fb.classList.remove('hidden');
+    document.getElementById('c2q4btn').classList.remove('hidden');
+  }
+}
+window.c2q4DropToZone = c2q4DropToZone;
+
+// ─── renderC2Q5: Inverted Nuns ────────────────────────────────────────────────
+
+function renderC2Q5(el) {
+  const s = screenText('c2q5');
+  const hs = src().c2q5;
+  el.innerHTML = `
+    ${progressBar(5, 6)}
+    ${c2dots(5)}
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    <div class="body-text">${s.body1}</div>
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
+    ${divider()}
+    <div id="c2q5puzzle1">
+      <div class="reflection-question">${s.puzzle1Question}</div>
+      <div class="choices" id="c2p1choices">
+        ${s.puzzle1Options.map((opt, i) => `<button class="choice-btn" onclick="c2q5P1(${i})">${opt}</button>`).join('')}
+      </div>
+      <div id="c2p1fb" class="hidden"></div>
+    </div>
+    <div id="c2q5puzzle2" class="hidden" style="margin-top:20px;">
+      <div class="reflection-question">${s.puzzle2Question}</div>
+      <div class="choices" id="c2p2choices">
+        ${s.puzzle2Options.map((opt, i) => `<button class="choice-btn" onclick="c2q5P2(${i})">${opt}</button>`).join('')}
+      </div>
+      <div id="c2p2fb" class="hidden"></div>
+    </div>
+    <div id="c2q5insight" class="hidden">
+      <div class="body-text" style="background:rgba(201,146,42,0.07);border-left:3px solid var(--gold);padding:12px 16px;border-radius:4px;margin:16px 0;">
+        <div style="font-family:'Noto Serif Hebrew',serif;font-size:0.95rem;color:var(--gold-deep);margin-bottom:6px;">${hs.yakovHe}</div>
+        <div>${s.yakovFact}</div>
+      </div>
+    </div>
+    <div id="c2q5btn" class="hidden"><button class="btn-primary" onclick="next()">${s.next}</button></div>
+    ${chapterGlossary([
+      glossaryItem(hs.nunHe, s.glossary[0]),
+      glossaryItem(hs.aronHe, s.glossary[1]),
+      glossaryItem(hs.merkavaHe, s.glossary[2])
+    ])}
+    ${footerCredit()}`;
+}
+
+function c2q5P1(idx) {
+  const s = screenText('c2q5');
+  document.querySelectorAll('#c2p1choices .choice-btn').forEach(b => { b.disabled = true; });
+  document.querySelectorAll('#c2p1choices .choice-btn')[idx].classList.add('selected');
+  const fb = document.getElementById('c2p1fb');
+  if (idx === s.puzzle1Answer) {
+    fb.innerHTML = `<div class="feedback-box"><div class="translation">${s.puzzle1Feedback}</div></div>`;
+  } else {
+    fb.innerHTML = `<div class="feedback-error">Не совсем — ответ ${s.puzzle1Options[s.puzzle1Answer]}. ${s.puzzle1Feedback}</div>`;
+  }
+  fb.classList.remove('hidden');
+  document.getElementById('c2q5puzzle2').classList.remove('hidden');
+}
+window.c2q5P1 = c2q5P1;
+
+function c2q5P2(idx) {
+  const s = screenText('c2q5');
+  document.querySelectorAll('#c2p2choices .choice-btn').forEach(b => { b.disabled = true; });
+  document.querySelectorAll('#c2p2choices .choice-btn')[idx].classList.add('selected');
+  const fb = document.getElementById('c2p2fb');
+  if (idx === s.puzzle2Answer) {
+    fb.innerHTML = `<div class="feedback-box"><div class="translation">${s.puzzle2Feedback}</div></div>`;
+  } else {
+    fb.innerHTML = `<div class="feedback-error">Не совсем — ответ ${s.puzzle2Options[s.puzzle2Answer]}. ${s.puzzle2Feedback}</div>`;
+  }
+  fb.classList.remove('hidden');
+  document.getElementById('c2q5insight').classList.remove('hidden');
+  document.getElementById('c2q5btn').classList.remove('hidden');
+}
+window.c2q5P2 = c2q5P2;
+
+// ─── renderC2Q6: Moses' Humility ──────────────────────────────────────────────
+
+function renderC2Q6(el) {
+  const s = screenText('c2q6');
+  const hs = src().c2q6;
+  el.innerHTML = `
+    ${progressBar(6, 6)}
+    ${c2dots(6)}
+    <div class="scene-title">${s.sceneTitle} · ${hs.sceneHe}</div>
+    <div class="day-title">${s.title}</div>
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    <div class="body-text">${s.body1}</div>
+    ${divider()}
+    <div class="body-text">
+      <strong>${s.insight1Title}</strong><br>${s.insight1}
+    </div>
+    <div class="body-text" style="margin-top:12px;">
+      <strong>${s.insight2Title}</strong><br>${s.insight2}
+    </div>
+    <div class="body-text" style="margin-top:12px;">
+      <strong>${s.insight3Title}</strong><br>${s.insight3}
+    </div>
+    ${quoteBlock(hs.quote2He, '«' + hs.quote2He + '»', s.quoteSource + ' · 5 букв')}
+    ${divider()}
+    <div class="body-text"><strong>${s.reflectionLead}</strong></div>
+    <div class="reflection-question">${s.reflectionQuestion}</div>
+    <textarea class="journal-input" id="journalC2Q6" placeholder="${s.placeholder}"></textarea>
+    <button class="btn-secondary" onclick="submitC2Q6()">${s.submit}</button>
+    <div id="c2q6fb" class="hidden"></div>
+    <button class="btn-primary" onclick="next()" style="margin-top:20px;">${s.next}</button>
+    ${chapterGlossary([
+      glossaryItem(hs.anavHe, s.glossary[0]),
+      glossaryItem('מִרְיָם', s.glossary[1]),
+      glossaryItem('רְפוּאָה', s.glossary[2])
+    ])}
+    ${footerCredit()}`;
+}
+
+function submitC2Q6() {
+  const s = screenText('c2q6');
+  const hs = src().c2q6;
+  const val = document.getElementById('journalC2Q6').value.trim();
+  state.journalEntries.push(val || s.emptyJournal);
+  const fb = document.getElementById('c2q6fb');
+  fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${hs.feedbackHe}</div><div class="translation">${s.feedback}</div><div class="source">${s.feedbackSource}</div></div>`;
+  fb.classList.remove('hidden');
+}
+window.submitC2Q6 = submitC2Q6;
+
+// ─── renderC2Final ────────────────────────────────────────────────────────────
+
+function renderC2Final(el) {
+  const s = screenText('c2final');
+  const hs = src().c2final;
+  el.innerHTML = `
+    <div class="rebbe-portrait">🕎</div>
+    <div class="hebrew-title" style="font-size:1.5rem;">${hs.titleHe}</div>
+    <div class="russian-subtitle">${s.subtitle}</div>
+    ${divider()}
+    ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
+    ${quoteBlock(hs.quote2He, s.quote2, s.quote2Source)}
+    ${divider()}
+    <div class="body-text" style="text-align:center;font-weight:600;color:var(--gold-deep);margin-bottom:12px;">${s.summaryTitle}</div>
+    <div class="c2-summary-grid">
+      ${s.summary.map(item => `
+        <div class="c2-summary-item">
+          <div class="c2-summary-icon">${item.icon}</div>
+          <div class="c2-summary-topic">${item.topic}</div>
+          <div class="c2-summary-lesson">${item.lesson}</div>
+        </div>`).join('')}
+    </div>
+    ${divider()}
+    <div class="body-text final-prompt">${s.prompt}</div>
+    <div class="choices" id="c2finalChoices">
+      ${s.choices.map((c, i) => `<button class="choice-btn" onclick="c2FinalChoice(this, ${i})">${c}</button>`).join('')}
+    </div>
+    <div id="c2finalFb" class="hidden"></div>
+    <div id="c2finalNav" class="hidden" style="text-align:center;margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn-secondary" onclick="renderScreen(0)">${s.backHome}</button>
+      <button class="btn-secondary" onclick="renderScreen(1)">${s.backChapter1}</button>
+    </div>
+    ${divider()}
+    <div style="text-align:center;direction:ltr;margin-top:16px;"><div style="font-family:'Noto Serif Hebrew',serif;font-size:1.1rem;color:var(--gold-deep);">${hs.chantHe}</div></div>
+    ${chapterGlossary([
+      glossaryItem(src().c2q1.menorahHe, s.glossary[0]),
+      glossaryItem(src().c2q2.pesachSheniHe, s.glossary[1]),
+      glossaryItem(src().c2q6.anavHe, s.glossary[2])
+    ])}
+    ${footerCredit()}`;
+}
+
+function c2FinalChoice(btn, idx) {
+  const s = screenText('c2final');
+  const hs = src().c2final;
+  document.querySelectorAll('#c2finalChoices .choice-btn').forEach(b => { b.disabled = true; });
+  btn.classList.add('selected');
+  const hebrewArr = [
+    'אוֹר לַגּוֹיִים',
+    'פֶּסַח שֵׁנִי — עוֹד לֹא מְאוּחָר',
+    'עָנָו = בְּעֵדֶן'
+  ];
+  const fb = document.getElementById('c2finalFb');
+  fb.innerHTML = `<div class="feedback-box"><div class="hebrew">${hebrewArr[idx]}</div><div class="translation">${s.feedback[idx]}</div><div class="source">${s.feedbackSource}</div></div>`;
+  fb.classList.remove('hidden');
+  document.getElementById('c2finalNav').classList.remove('hidden');
+}
+window.c2FinalChoice = c2FinalChoice;
 
 (function () {
   const bubble = document.getElementById('tooltipBubble');

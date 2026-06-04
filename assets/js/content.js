@@ -11,7 +11,8 @@
         titleHe: 'אֲנִי מַאֲמִין בֶּאֱמוּנָה שְׁלֵמָה',
         rebbeHe: 'אֲנִי מַאֲמִין בֶּאֱמוּנָה שְׁלֵמָה בְּבִיאַת הַמָּשִׁיחַ',
         mottoHe: 'מִצְוָה גְּדוֹלָה לִהְיוֹת בְּשִׂמְחָה תָּמִיד',
-        chapterHe: 'בְּהַעֲלֹתְךָ'
+        chapterHe: 'בְּהַעֲלֹתְךָ',
+        chapter2He: 'בְּהַעֲלֹתְךָ ב׳'
       },
       intro: {
         titleHe: 'מָן מִן הַשָּׁמַיִם',
@@ -81,6 +82,64 @@
         quoteHe: 'הַדּוֹר הָאַחֲרוֹן שֶׁל הַגָּלוּת הוּא הַדּוֹר הָרִאשׁוֹן שֶׁל הַגְּאוּלָה — הַגְּאוּלָה לְכָל יִשְׂרָאֵל בְּכָל הַדּוֹרוֹת',
         quote2He: 'לַעֲמוֹד מוּכָנִים כּוּלְּכֶם לְקַבֵּל פְּנֵי מָשִׁיחַ צִדְקֵנוּ',
         chantHe: 'יְחִי אֲדוֹנֵנוּ מוֹרֵנוּ וְרַבֵּנוּ מֶלֶךְ הַמָּשִׁיחַ לְעוֹלָם וָעֶד'
+      },
+      intro2: {
+        titleHe: 'הַמְּנוֹרָה, הֶעָנָן, וְהַחֲצוֹצְרוֹת',
+        quoteHe: 'כִּי אֲנִי אֵינִי צָרִיךְ לָאוֹרָה — אַתֶּם תָּאִירוּ אֶת הָעוֹלָם'
+      },
+      c2q1: {
+        sceneHe: 'שְׁאֵלָה א׳',
+        quoteHe: 'כִּי אֲנִי אֵינִי צָרִיךְ לָאוֹרָה',
+        quote2He: 'כְּמַרְאֵה אֲשֶׁר הֶרְאָה ה׳ אֶת מֹשֶׁה — כֵּן עָשָׂה אֶת הַמְּנוֹרָה',
+        menorahHe: 'מְנוֹרָה',
+        gavrielHe: 'גַּבְרִיאֵל',
+        chainHe: 'חַי',
+        successHe: 'כְּמַרְאֵה — כְּגַבְרִיאֵל'
+      },
+      c2q2: {
+        sceneHe: 'שְׁאֵלָה ב׳',
+        quoteHe: 'וַיִּהְיוּ אֲנָשִׁים אֲשֶׁר הָיוּ טְמֵאִים לְנֶפֶשׁ אָדָם',
+        quote2He: 'לָמָּה נִגָּרַע לְבִלְתִּי הַקְרִיב',
+        pesachSheniHe: 'פֶּסַח שֵׁנִי',
+        yosefHe: 'יוֹסֵף הַצַּדִּיק',
+        feedbackHe: 'לָמָּה נִגָּרַע — שְׁאֵלָה שֶׁשִּׁנְּתָה אֶת הַתּוֹרָה לְכָל הַדּוֹרוֹת'
+      },
+      c2q3: {
+        sceneHe: 'שְׁאֵלָה ג׳',
+        quoteHe: 'אֶסְפָה לִּי שִׁבְעִים אִישׁ מִזִּקְנֵי יִשְׂרָאֵל',
+        quote2He: 'מִי יִתֵּן כָּל עַם ה׳ נְבִיאִים',
+        eldadHe: 'אֶלְדָּד וּמֵידָד',
+        shivimHe: 'שִׁבְעִים',
+        successHe: 'מִי יִתֵּן כָּל עַם ה׳ נְבִיאִים — כֵּן יִתֵּן ה׳ אֶת רוּחוֹ עֲלֵיהֶם'
+      },
+      c2q4: {
+        sceneHe: 'שְׁאֵלָה ד׳',
+        quoteHe: 'עֲשֵׂה לְךָ שְׁתֵּי חֲצוֹצְרוֹת כֶּסֶף',
+        quote2He: 'כֶּסֶף — וְלֹא זָהָב, שֶׁלֹּא לְהַזְכִּיר קוֹל הָעָם בְּרָעָה',
+        chatzotzerotHe: 'חֲצוֹצְרוֹת',
+        feedbackHe: 'תָּבֹאוּ — אוֹתִיּוֹת אָבוֹת, שֶׁזְּכוּת הָאָבוֹת עוֹמֶדֶת בַּמִּלְחָמָה'
+      },
+      c2q5: {
+        sceneHe: 'שְׁאֵלָה ה׳',
+        quoteHe: 'וַיְהִי בִּנְסֹעַ הָאָרֹן וַיֹּאמֶר מֹשֶׁה קוּמָה ה׳',
+        quote2He: 'וּבְנֻחֹה יֹאמַר שׁוּבָה ה׳ רִבְבוֹת אַלְפֵי יִשְׂרָאֵל',
+        aronHe: 'אָרוֹן הַקֹּדֶשׁ',
+        nunHe: 'נוּן הַפוּכָה',
+        merkavaHe: 'מֶרְכָּבָה',
+        yakovHe: 'יַעֲקֹב — דְּמוּתוֹ חֲקוּקָה בַּכִּסֵּא'
+      },
+      c2q6: {
+        sceneHe: 'שְׁאֵלָה ו׳',
+        quoteHe: 'וְהָאִישׁ מֹשֶׁה עָנָיו מְאֹד מִכֹּל הָאָדָם',
+        quote2He: 'רְפָא נָא לָהּ',
+        anavHe: 'עָנָו',
+        feedbackHe: 'עָנָו בְּגִימַטְרִיָּה — בְּעֵדֶן'
+      },
+      c2final: {
+        titleHe: 'אוֹר הַמְּנוֹרָה בָּעוֹלָם',
+        quoteHe: 'אֶל מוּל פְּנֵי הַמְּנוֹרָה יָאִירוּ שִׁבְעַת הַנֵּרוֹת',
+        quote2He: 'הַדּוֹר הָאַחֲרוֹן שֶׁל הַגָּלוּת הוּא הַדּוֹר הָרִאשׁוֹן שֶׁל הַגְּאוּלָה',
+        chantHe: 'יְחִי אֲדוֹנֵנוּ מוֹרֵנוּ וְרַבֵּנוּ מֶלֶךְ הַמָּשִׁיחַ לְעוֹלָם וָעֶד'
       }
     },
     translations: {
@@ -111,6 +170,7 @@
           audioUnavailable: 'Аудио недоступно'
         },
         sections: ['Главная', 'О проекте', 'День 1', 'День 2', 'День 3', 'День 4', 'День 5', 'День 6', 'Шабес', 'Заключение'],
+        sections2: ['Введение', 'Задание 1', 'Задание 2', 'Задание 3', 'Задание 4', 'Задание 5', 'Задание 6', 'Заключение'],
         screens: {
           home: {
             eyebrow: '12-й принцип веры',
@@ -120,6 +180,9 @@
             chapterTitle: 'Беалотха',
             chapterDescription: 'Ман с Небес — интерактивный путь сквозь пустыню. По сихе Любавичского Ребе, 19 Сивана 5751.',
             chapterMeta: '7 дней · Ликутей Сихот, т. 39',
+            chapter2Title: 'Беалотха 2',
+            chapter2Description: 'Менора, Облако и Трубы — математический и смысловой квест. Бамидбар 8–12.',
+            chapter2Meta: '6 заданий · Бамидбар гл. 8–12',
             enter: 'Войти →'
           },
           intro: {
@@ -376,6 +439,218 @@
               { label: 'Тшува', def: '«Сразу за тшувой — Геула». Тшува — ключ к Избавлению.' },
               { label: 'Ман', def: 'Духовная пища, которая питала каждого еврея. Урок: Б-г не оставляет никого.' }
             ]
+          },
+          intro2: {
+            subtitle: 'Беалотха — Глава 2',
+            quote: '«Мне не нужен ваш свет — Я повелел зажечь его ради вас»',
+            quoteSource: 'Раши. Бамидбар 8:2',
+            body1: 'Мы продолжаем путь. После мана — Менора, после Меноры — Облако, ведущее в поход, и Ковчег, несущий Шхину. Впереди: математические тайны числа 18, история о втором шансе, загадка числа 70, два серебряных рога, перевёрнутые буквы и самый смиренный человек в мире.',
+            tableHead: ['Тема', 'Стих', 'Тип задания'],
+            tableRows: [
+              ['Математика Меноры', '8:2–4', '🔢 Числа и гематрия'],
+              ['Второй шанс (Песах Шени)', '9:6–13', '🎭 Сделай выбор'],
+              ['Загадка числа 70', '11:16–17', '🧩 Найди связи'],
+              ['Две серебряные трубы', '10:2–10', '🎯 Расставь по местам'],
+              ['Перевёрнутые нуны и Ковчег', '10:33–36', '🔢 Посчитай слова'],
+              ['Смирение Моше', '12:1–13', '✍️ Запиши мысль']
+            ],
+            next: 'Начать →',
+            glossary: [
+              { label: 'Менора', def: 'Семисвечник в Скинии. Символ Израиля как света для народов мира.' },
+              { label: 'Песах Шени', def: '14 ияра — второй шанс принести пасхальную жертву.' },
+              { label: 'Хацоцрот', def: 'Серебряные трубы, которые Моше сделал лично.' }
+            ]
+          },
+          c2q1: {
+            sceneTitle: 'Задание 1',
+            title: 'Математика Меноры',
+            quote: '«Ибо Мне не нужен свет — вы осветите мир для Меня»',
+            quoteSource: 'Раши. Бамидбар 8:2 — Б-г не нуждается в свете Меноры; это для нас',
+            body1: 'Конструкция Меноры полна числовых тайн. Нажми на каждое число, чтобы раскрыть его секрет!',
+            reveals: [
+              { number: '18', he: 'חַי', title: 'Высота Меноры — 18 ладоней', text: 'חי (хай) = 18 = жизнь. Менора высотой в «жизнь» освещает жизнь! (Рамбам, hилхот Бейт hа-Бхира)' },
+              { number: '7', he: 'שִׁבְעָה', title: 'Семь свечей', text: 'Семь свечей Меноры соответствуют семи планетам (חנכ"ל שצ"ם). Менора освещает не только Скинию — она освещает всё мироздание.' },
+              { number: '4', he: 'אַרְבַּע', title: 'Четыре упоминания', text: 'Слово «менора» упомянуто 4 раза в стихе 8:4 — намёк на 4 меноры из золота, которые зажигали на празднике Суккот в Храме (Симхат Бейт hа-Шоэва).' }
+            ],
+            revealPrompt: 'Нажми на число, чтобы узнать его секрет:',
+            quizQuestion: 'Кто показал Моше точный образ Меноры на горе Синай?',
+            quizOptions: ['Михаэль', 'Гавриэль', 'Рафаэль', 'Уриэль'],
+            quizAnswer: 1,
+            quizFeedback: '«כמראה» (как видение) в гематрии = «כגבריאל» (как Гавриэль) — именно ангел Гавриэль показал Моше точный образ Меноры! (Бамидбар 8:4, Раши)',
+            next: 'Следующее задание →',
+            glossary: [
+              { label: 'Менора', def: 'Семисвечник в Скинии. Зажигался каждый день. По Ханукке — намёк на 8 свечей.' },
+              { label: 'Гематрия', def: 'Числовое значение ивритских букв. חי = ח(8)+י(10) = 18 = жизнь.' },
+              { label: 'Гавриэль', def: 'Ангел, показавший Моше образ Меноры. «כמראה» = «כגבריאל» по гематрии.' }
+            ]
+          },
+          c2q2: {
+            sceneTitle: 'Задание 2',
+            title: 'Второй шанс — Песах Шени',
+            quote: '«И были люди, нечистые от мёртвого тела человека»',
+            quoteSource: 'Бамидбар 9:6',
+            body1: 'Мидраш открывает: те мужчины несли гроб Йосефа через пустыню — великое дело. Но из-за этого они стали нечисты и пропустили Песах. Они не смирились. Они подошли к Моше и спросили:',
+            quote2: '«Зачем нам быть лишёнными? Мы хотим принести жертву Господу!»',
+            quote2Source: 'Бамидбар 9:7 — вопрос, изменивший Тору навсегда',
+            body2: 'Этот вопрос изменил еврейский закон для всех поколений. Б-г ответил Моше: установить Песах Шени — второй Песах, 14 ияра.',
+            choicePrompt: 'Ты пропустил Песах из-за важного дела (не по своей вине). Что ты сделаешь?',
+            choices: [
+              '😔 Приму это — Б-г видит, что я не виноват',
+              '🙋 Пойду к раввину — может, есть второй шанс?',
+              '📚 Сам найду способ отметить — без разрешения'
+            ],
+            feedback: [
+              { he: 'לֹא תֵלֵךְ רֵיקָם', quote: '«Не уходи с пустыми руками» (Шмот 23:15)', note: 'Смирение хорошо — но именно вопрос несущих гроб Йосефа породил закон Песах Шени! Смирение без вопроса — упущенная возможность.' },
+              { he: 'לָמָּה נִגָּרַע', quote: '«Зачем нам быть лишёнными?» (Бамидбар 9:7)', note: 'Верно! Один вопрос изменил Тору для всех поколений. Закон Песах Шени — 14 ияра — существует потому, что они спросили. Никогда не поздно спросить!' },
+              { he: 'שְׁאַל אֶת הָרַב', quote: '«Спроси отца твоего, и он скажет тебе» (Дварим 32:7)', note: 'Инициатива похвальна — но без Торы можно ошибиться. Лучше спросить раввина, как сделали несущие гроб Йосефа.' }
+            ],
+            insight: 'Урок Песах Шени: в еврействе всегда есть путь назад. «Никто не потерян навсегда» — Ребе учил: даже тот, кто «далеко» (בְּדֶרֶךְ רְחֹקָה), может вернуться.',
+            next: 'Следующее задание →',
+            glossary: [
+              { label: 'Песах Шени', def: '14 ияра — второй Песах. Установлен для тех, кто был нечист или далеко в пути в 14 нисана.', ref: 'Бамидбар 9:10–11' },
+              { label: 'Гроб Йосефа', def: 'Несущие гроб Йосефа из Египта стали нечисты от мёртвого, но совершили великое дело — и их вопрос изменил Тору.' },
+              { label: 'Карет', def: 'Духовное «отсечение». Наказание за намеренный пропуск Песаха без причины (Бамидбар 9:13).' }
+            ]
+          },
+          c2q3: {
+            sceneTitle: 'Задание 3',
+            title: 'Тайна числа 70',
+            quote: '«Собери мне 70 человек из старейшин Израиля»',
+            quoteSource: 'Бамидбар 11:16',
+            body1: 'Почему именно 70? Мидраш открывает три удивительных параллели!',
+            connections: [
+              { number: '70', icon: '👴', label: 'Старейшины', he: 'שִׁבְעִים זְקֵנִים', text: 'Моше выбрал 70 старейшин — по числу душ, спустившихся в Египет с Яаковом (Берешит 46:27). Связь поколений!' },
+              { number: '70', icon: '🌍', label: 'Народы мира', he: 'שִׁבְעִים אֻמּוֹת', text: '70 народов мира — потомки сыновей Ноаха. 70 старейшин Израиля несут ответственность и за всё человечество.' },
+              { number: '70', icon: '✡️', label: 'Имена Б-га', he: 'שִׁבְעִים שֵׁמוֹת', text: 'У Всевышнего 70 имён. 70 старейшин соответствуют этим именам. Вот почему «Иерусалим» тоже имеет 70 имён в Мидраше.' }
+            ],
+            connectPrompt: 'Нажми на каждую карточку, чтобы раскрыть связь:',
+            mathQuestion: 'Элдад и Мидад остались в лагере, но тоже пророчествовали. Итого: 70 старейшин + Элдад + Мидад = ?',
+            mathOptions: [70, 71, 72, 73],
+            mathAnswer: 2,
+            mathFeedback: '72! И Моше не ревновал — он сказал: «Хоть бы весь народ Господень стал пророками!» (Бамидбар 11:29). Настоящее величие не ревнует к чужому дару.',
+            eldadInsight: 'Мидраш раскрывает: имена «Элдад и Мидад» содержат акростих: «Мо-ше умрёт, Йе-хошуа введёт Израиль в страну». Они пророчествовали о будущем!',
+            spiritNote: 'Особый момент: дух пророчества у Элдада и Мидада исходил напрямую от Б-га — не от Моше, как у остальных 70. «И почила на них дух» (11:26) — тот же оборот, что при остановке Ковчега: «как почивает Ковчег Г-сподень» (9:25).',
+            next: 'Следующее задание →',
+            glossary: [
+              { label: 'Элдад и Мидад', def: 'Двое из 70 избранных, оставшихся в лагере. Пророчествовали прямо о смерти Моше и входе Йехошуа в Землю.', ref: 'Бамидбар 11:26–27' },
+              { label: '70 народов', def: 'По Торе — 70 основных народов мира, потомки трёх сыновей Ноаха (Берешит 10).', ref: 'Таргум Йонатан' },
+              { label: 'Дух пророчества', def: 'Руах hа-кодеш. Моше «отдал» часть своего духа 70 старейшинам; Элдад и Мидад получили напрямую от Б-га.' }
+            ]
+          },
+          c2q4: {
+            sceneTitle: 'Задание 4',
+            title: 'Две серебряные трубы',
+            quote: '«Сделай себе две серебряные трубы»',
+            quoteSource: 'Бамидбар 10:2 — только Моше лично, эти трубы были его собственными',
+            body1: 'Почему серебро, а не золото? «Чтобы не вспоминать голос народа во зло» — не напоминать о грехе золотого тельца! Два рога = Авраам и Яаков, победившие врагов в бою.',
+            quote2: '«И если придёте на войну в стране вашей против врага — трубите в трубы»',
+            quote2Source: 'Бамидбар 10:9 — намёк на войну Гога и Магога в будущем. «Придёте» (תבאו) — буквы = אבות (праотцы): их заслуга защищает в войне',
+            body2: 'Математическая тайна: «שִׂמְחֹתֵיכֶם» (ваши радости) в гематрии включает слово «Шабес». «וּבְמוֹעֲדֵיכֶם» (в ваши праздники) — написано полностью, с вавом = 6 праздников: Песах, Шавуот, Рош hа-Шана, Йом Кипур, Суккот, Шмини Ацерет.',
+            gameLead: 'Игра: когда трубят в трубы?',
+            gameText: 'Выбери карточку, затем нажми на зону',
+            sortData: [
+              { text: '⚔️ Война с врагами', correct: 'yes' },
+              { text: '🎉 Праздничные жертвоприношения', correct: 'yes' },
+              { text: '🌙 Новолуние (Рош Ходеш)', correct: 'yes' },
+              { text: '✡️ Шабес (по гематрии)', correct: 'yes' },
+              { text: '☕ Обычный будний день', correct: 'no' },
+              { text: '💼 Личные дела', correct: 'no' }
+            ],
+            zoneYes: '🎺 Трубят',
+            zoneNo: '🚫 Не трубят',
+            feedback: 'Отлично! «Тбоу» (придёте) = буквы אבות (праотцы) — заслуга Авраама, Ицхака и Яакова защищает в войне. Трубы — голос всего народа в радости, в беде и в победе.',
+            feedbackSource: 'Бамидбар 10:9–10 · Раши и Баал Туфос',
+            next: 'Следующее задание →',
+            glossary: [
+              { label: 'Хацоцрот', def: 'Серебряные трубы. Сделаны из серебра (не золота) — чтобы не вспоминать грех золотого тельца.', ref: 'Бамидбар 10:2' },
+              { label: 'Гог и Магог', def: 'Великая война конца времён. «Придёте на войну» — Мидраш: намёк на эту будущую войну.', ref: 'Иехезкель 38–39' },
+              { label: 'Рош Ходеш', def: 'Новолуние. Отмечается как полупраздник с особыми молитвами и Мусафом.' }
+            ]
+          },
+          c2q5: {
+            sceneTitle: 'Задание 5',
+            title: 'Перевёрнутые нуны — маленькая Книга',
+            body1: 'В Торе есть два стиха о Ковчеге, окружённые «перевёрнутыми нунами» (נ הפוכה). Талмуд объясняет: этот маленький раздел считается отдельной Книгой Торы! (Шабат 115б–116а)',
+            quote: '«И было, когда двигался Ковчег, Моше говорил: Восстань, Господь, и рассеются враги Твои!»',
+            quoteSource: 'Бамидбар 10:35 — «ויהי» = горе врагам; гематрия 31 = 31 царь, побеждённый Иehошуа',
+            quote2: '«И когда останавливался, говорил: Вернись, Господь, к мириадам тысяч Израиля»',
+            quote2Source: 'Бамидбар 10:36 — «ובנחה» написано с буквой hей = 4 стана + стан левитов',
+            puzzle1Question: 'Посчитай слова в стихе 10:35 («ויהי בנסוע הארון...»):',
+            puzzle1Options: [9, 10, 12, 14],
+            puzzle1Answer: 2,
+            puzzle1Feedback: '12 слов! — как в последнем стихе всей Торы (Дварим 34:12, «לכל היד החזקה»). Конец Торы тоже содержит 12 слов.',
+            puzzle2Question: 'Сколько слов в стихе 10:36 («ובנחה יאמר שובה ה׳...»)?',
+            puzzle2Options: [5, 6, 7, 8],
+            puzzle2Answer: 2,
+            puzzle2Feedback: '7 слов — как в «Берешит бара Элоhим» (Берешит 1:1)! Начало Торы = 7 слов. Этот раздел — сам по себе отдельная Книга Торы между двумя «карательными» эпизодами.',
+            yakovFact: '«בנסע» (в движении Ковчега) в гематрии = יעקב (Яаков). Образ Яакова, высеченный на Троне Славы, путешествовал вместе с Ковчегом через пустыню.',
+            next: 'Следующее задание →',
+            glossary: [
+              { label: 'Нун перевёрнутая', def: 'Особый знак в свитке Торы, окружающий два стиха о Ковчеге. Обозначает отдельную Книгу.', ref: 'Шабат 115б' },
+              { label: 'Ковчег Завета', def: 'Арон hа-Кодеш. Когда двигался — нёс с собой Меркаву (Небесную колесницу) и Святых Животных.' },
+              { label: 'Меркава', def: 'Небесная колесница — мистическая структура. Ковчег нёс её при каждом переходе по пустыне.' }
+            ]
+          },
+          c2q6: {
+            sceneTitle: 'Задание 6',
+            title: 'Самый смиренный человек в мире',
+            quote: '«И человек Моше — самый смиренный из всех людей на земле»',
+            quoteSource: 'Бамидбар 12:3',
+            body1: 'Мирьям и Аарон говорили о Циппоре — жене Моше. Б-г слышал всё. Моше же — не слышал. Именно в этом и есть смирение: не реагировать, не защищаться, доверять Б-гу.',
+            insight1Title: 'Тайна «кушитянки»',
+            insight1: '«הַכּוּשִׁית» (кушитянка) в гематрии = «יְפַת מַרְאֶה» (красивая видом) = 736. Мидраш: Ципора была прекрасна, как кушитянка красива среди своего народа. Называли её так в знак особой красоты.',
+            insight2Title: 'Гематрия смирения',
+            insight2: '«עָנָו» (смиренный) написано без буквы «алеф» — אֲנָיו. Кабала: алеф «в изгнании». Но главное: גִּימַטְרִיָּה «ענו» = 126 = «בְּעֵדֶן» (в Эдеме). Смирение буквально ведёт в Рай!',
+            insight3Title: 'Пять букв Моше',
+            insight3: 'Молитва Моше за Мирьям: «רְפָא נָא לָהּ» — всего 5 слов, 5 букв. Самая короткая эффективная молитва в Торе. Урок: настоящей молитве не нужны длинные слова — нужна только душа.',
+            reflectionLead: 'Вопрос для размышления:',
+            reflectionQuestion: 'Вспомни человека, которого ты уважаешь за смирение. Что в нём тебя вдохновляет? Какое качество ты хотел бы развить в себе?',
+            placeholder: 'Запиши свою мысль здесь...',
+            submit: 'Записать →',
+            emptyJournal: '(мысль принята)',
+            feedback: '«עָנָו» = «בְּעֵדֶן» = 126. Смирение открывает Эден — рай внутри самого себя.',
+            feedbackSource: 'Бамидбар 12:3 · Кабала: гематрия ענו = 126 = בעדן',
+            next: 'К заключению →',
+            glossary: [
+              { label: 'Анав / Ванав', def: 'Смиренный. Не тот, кто унижает себя, а тот, кто не требует уважения к себе, но отдаёт его другим.', ref: 'Бамидбар 12:3' },
+              { label: 'Мирьям', def: 'Сестра Моше. Пророчица. Говорила о браке брата и была наказана проказой. Моше молился за её исцеление.', ref: 'Бамидбар 12:1–15' },
+              { label: 'Рефуа', def: 'Исцеление. «רפא נא לה» = «исцели же её». Пять букв — кратчайшая молитва Торы, произнесённая от любви.' }
+            ]
+          },
+          c2final: {
+            subtitle: 'Беалотха — Глава 2: итог',
+            quote: '«Семь свечей будут светить к лицу Меноры»',
+            quoteSource: 'Бамидбар 8:2 — свет обращён к людям, не к Б-гу',
+            quote2: '«Последнее поколение изгнания — первое поколение Избавления»',
+            quote2Source: 'Любавичский Ребе, Беаалотха 5751',
+            summaryTitle: 'Шесть уроков Беалотхи-2:',
+            summary: [
+              { icon: '🕎', topic: 'Менора', lesson: '18 ладоней = חי = жизнь. Мы призваны освещать мир — для людей, не для Б-га.' },
+              { icon: '🔄', topic: 'Песах Шени', lesson: 'Один вопрос изменил Тору. Никогда не поздно спросить и получить второй шанс.' },
+              { icon: '✡️', topic: 'Число 70', lesson: '70 старейшин = 70 душ в Египте = 70 народов = 70 имён Б-га. Мы связаны со всем.' },
+              { icon: '🎺', topic: 'Две трубы', lesson: 'Серебро, не золото. «Придёте» = «праотцы». Их заслуга защищает нас.' },
+              { icon: '📜', topic: 'Нун перевёрнутая', lesson: '12 слов + 7 слов = начало и конец Торы. Маленький раздел — отдельная Книга.' },
+              { icon: '🤲', topic: 'Смирение', lesson: 'ענו = בעדן = 126. Смирение — это путь в Рай. «רפא נא לה» — пять букв великой молитвы.' }
+            ],
+            prompt: 'Какой урок из Беалотхи-2 ты берёшь с собой?',
+            choices: [
+              '💡 Буду осветлять мир — найду один способ помочь другому на этой неделе',
+              '🔄 Воспользуюсь вторым шансом — сделаю то, что давно откладывал',
+              '🤲 Буду практиковать смирение — один день буду слушать больше, чем говорить'
+            ],
+            feedback: [
+              '«Велика заповедь быть в радости» — осветить мир значит принести радость другому. Менора светит «к лицу» людей, не к Б-гу.',
+              '«Песах Шени» — второй шанс существует! Сделай это сегодня. Не жди следующего Нисана. Один вопрос меняет всё.',
+              '«ענו» = «בעדן». Один день смирения открывает больше дверей, чем год споров. Моше молился за Мирьям — пятью словами.'
+            ],
+            feedbackSource: 'Беалотха, Бамидбар · По сихе Любавичского Ребе זי"ע',
+            backHome: '← Вернуться на главную',
+            backChapter1: '← Глава 1: Ман с Небес',
+            glossary: [
+              { label: 'Менора', def: 'Семисвечник. Символ Израиля как «света для народов». Свет обращён к людям — не к Б-гу.' },
+              { label: 'Песах Шени', def: '14 ияра — второй шанс. Урок: никто не потерян навсегда. Вопрос всегда уместен.' },
+              { label: 'Анава (смирение)', def: 'ענו = בעדן = 126. Смирение — высший духовный путь. «Самый смиренный из всех людей».' }
+            ]
           }
         },
         audio: [
@@ -388,7 +663,15 @@
           'День пятый. Шабес и ман. Распредели порции по дням недели и увидь, как благословение Шабеса питает всё остальное.',
           'День шестой. Тшува через ман. Подумай, что в твоей жизни требует терпения и постепенного труда.',
           'Святой Шабес. Ты прошёл недельный путь. Ман был для каждого, и твой итог — это не оценка, а путь.',
-          'Последнее поколение изгнания — первое поколение Избавления. Выбери действие, которое ты можешь сделать уже сегодня.'
+          'Последнее поколение изгнания — первое поколение Избавления. Выбери действие, которое ты можешь сделать уже сегодня.',
+          'Беалотха, глава вторая. Менора, Облако и Трубы. Впереди шесть заданий: математика, выбор, числа, сортировка, подсчёт слов и размышление. Нажми «Начать», чтобы продолжить путь.',
+          'Задание первое. Математика Меноры. Менора высотой восемнадцать ладоней — восемнадцать равно хай, жизнь. Нажми на числа, чтобы раскрыть их тайны.',
+          'Задание второе. Второй шанс. Люди, несущие гроб Йосефа, пропустили Песах. Они не смирились — они спросили. Один вопрос изменил Тору навсегда.',
+          'Задание третье. Тайна числа семьдесят. Семьдесят старейшин, семьдесят душ в Египте, семьдесят народов, семьдесят имён Б-га. Найди связи.',
+          'Задание четвёртое. Две серебряные трубы. Серебро, не золото — чтобы не вспоминать золотого тельца. Расставь карточки по правильным зонам.',
+          'Задание пятое. Перевёрнутые нуны. Два стиха о Ковчеге образуют отдельную Книгу Торы. Посчитай слова и открой тайну.',
+          'Задание шестое. Самый смиренный человек в мире. Анав в гематрии равно беэден — в Раю. Смирение — путь к высшему. Запиши свою мысль.',
+          'Заключение. Семь свечей Меноры светят к лицу людей. Последнее поколение изгнания — первое поколение Избавления. Выбери урок, который ты берёшь с собой.'
         ]
       },
       de: {
@@ -418,15 +701,19 @@
           audioUnavailable: 'Audio nicht verfügbar'
         },
         sections: ['Start', 'Über das Projekt', 'Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5', 'Tag 6', 'Schabbat', 'Abschluss'],
+        sections2: ['Einleitung', 'Aufgabe 1', 'Aufgabe 2', 'Aufgabe 3', 'Aufgabe 4', 'Aufgabe 5', 'Aufgabe 6', 'Abschluss'],
         screens: {
           home: {
             eyebrow: '12. Glaubensprinzip',
             subtitle: 'Ich glaube vollkommen an das Kommen des Maschiach',
-            motto: '„Es ist ein großes Gebot, immer in Freude zu sein“',
+            motto: '„Es ist ein großes Gebot, immer in Freude zu sein”',
             chaptersLabel: 'Kapitel',
             chapterTitle: 'Behaalotcha',
             chapterDescription: 'Manna vom Himmel — ein interaktiver Weg durch die Wüste nach der Sicha des Lubawitscher Rebbe vom 19. Siwan 5751.',
             chapterMeta: '7 Tage · Likutej Sichot, Bd. 39',
+            chapter2Title: 'Behaalotcha 2',
+            chapter2Description: 'Menora, Wolke und Trompeten — mathematisches und inhaltliches Quest. Bamidbar 8–12.',
+            chapter2Meta: '6 Aufgaben · Bamidbar Kap. 8–12',
             enter: 'Öffnen →'
           },
           intro: {
@@ -679,9 +966,221 @@
             feedbackSource: 'Danke, dass du diesen Weg gegangen bist · Nach der Sicha des Lubawitscher Rebbe זי"ע, Behaalotcha 5751',
             restart: '← Zur Startseite',
             glossary: [
-              { label: 'Geula', def: 'Erlösung — das Kommen des Maschiach. Der Rebbe: „Die letzte Generation des Exils ist die erste Generation der Geula“.' },
-              { label: 'Teschuwa', def: '„Unmittelbar nach der Teschuwa — die Geula“. Teschuwa ist ein Schlüssel zur Erlösung.' },
+              { label: 'Geula', def: 'Erlösung — das Kommen des Maschiach. Der Rebbe: „Die letzte Generation des Exils ist die erste Generation der Geula”.' },
+              { label: 'Teschuwa', def: '„Unmittelbar nach der Teschuwa — die Geula”. Teschuwa ist ein Schlüssel zur Erlösung.' },
               { label: 'Manna', def: 'Geistige Nahrung, die jeden Juden nährte. Die Lehre: G-tt lässt niemanden zurück.' }
+            ]
+          },
+          intro2: {
+            subtitle: 'Behaalotcha — Kapitel 2',
+            quote: '„Ich brauche euer Licht nicht — ich gebot es um euretwillen”',
+            quoteSource: 'Raschi. Bamidbar 8:2',
+            body1: 'Wir setzen den Weg fort. Nach dem Manna — die Menora, nach der Menora — die Wolke, die führt, und die Bundeslade, die die Schechina trägt. Vor uns: mathematische Geheimnisse der Zahl 18, eine Geschichte über eine zweite Chance, das Rätsel der Zahl 70, zwei silberne Hörner, umgekehrte Buchstaben und der demütigste Mensch der Welt.',
+            tableHead: ['Thema', 'Vers', 'Aufgabentyp'],
+            tableRows: [
+              ['Mathematik der Menora', '8:2–4', '🔢 Zahlen & Gematria'],
+              ['Zweite Chance (Pessach Scheni)', '9:6–13', '🎭 Triff eine Wahl'],
+              ['Rätsel der Zahl 70', '11:16–17', '🧩 Finde Verbindungen'],
+              ['Zwei silberne Trompeten', '10:2–10', '🎯 Sortiere'],
+              ['Umgekehrte Nuns & Lade', '10:33–36', '🔢 Zähle Wörter'],
+              ['Mosches Demut', '12:1–13', '✍️ Schreibe']
+            ],
+            next: 'Beginnen →',
+            glossary: [
+              { label: 'Menora', def: 'Siebenarmiger Leuchter im Heiligtum. Symbol Israels als Licht für die Völker.' },
+              { label: 'Pessach Scheni', def: '14. Ijjar — zweite Chance, das Pessachopfer zu bringen.' },
+              { label: 'Chazozrot', def: 'Silberne Trompeten, die Mosche persönlich anfertigte.' }
+            ]
+          },
+          c2q1: {
+            sceneTitle: 'Aufgabe 1',
+            title: 'Mathematik der Menora',
+            quote: '„Ich brauche das Licht nicht — ihr sollt die Welt für Mich erleuchten”',
+            quoteSource: 'Raschi. Bamidbar 8:2',
+            body1: 'Der Aufbau der Menora ist voller verborgener Zahlen. Drücke auf jede Zahl, um ihr Geheimnis zu enthüllen!',
+            reveals: [
+              { number: '18', he: 'חַי', title: 'Höhe der Menora — 18 Handbreiten', text: 'חי (Chai) = 18 = Leben. Die Menora in der Höhe des „Lebens” erleuchtet das Leben! (Rambam, Hil. Beit ha-Bechira)' },
+              { number: '7', he: 'שִׁבְעָה', title: 'Sieben Leuchter', text: 'Die sieben Leuchter der Menora entsprechen den sieben Planeten (חנכ”ל שצ”ם). Die Menora erleuchtet nicht nur das Heiligtum — sie erleuchtet das gesamte Universum.' },
+              { number: '4', he: 'אַרְבַּע', title: 'Vier Erwähnungen', text: 'Das Wort „Menora” wird viermal in Vers 8:4 erwähnt — ein Hinweis auf die vier goldenen Menoras beim Sukkot-Fest im Tempel (Simchat Beit ha-Schoeiva).' }
+            ],
+            revealPrompt: 'Drücke auf die Zahl, um ihr Geheimnis zu enthüllen:',
+            quizQuestion: 'Wer zeigte Mosche auf dem Sinai das genaue Bild der Menora?',
+            quizOptions: ['Michael', 'Gabriel', 'Rafael', 'Uriel'],
+            quizAnswer: 1,
+            quizFeedback: '„כמראה” (wie eine Vision) hat denselben Gematria-Wert wie „כגבריאל” (wie Gabriel) — der Engel Gabriel zeigte Mosche das genaue Bild der Menora! (Bamidbar 8:4, Raschi)',
+            next: 'Nächste Aufgabe →',
+            glossary: [
+              { label: 'Menora', def: 'Siebenarmiger Leuchter im Heiligtum. Täglich entzündet. Chanukka: Hinweis auf 8 Lichter.' },
+              { label: 'Gematria', def: 'Zahlenwert hebräischer Buchstaben. חי = ח(8)+י(10) = 18 = Leben.' },
+              { label: 'Gabriel', def: 'Der Engel, der Mosche das Bild der Menora zeigte. „כמראה” = „כגבריאל” nach Gematria.' }
+            ]
+          },
+          c2q2: {
+            sceneTitle: 'Aufgabe 2',
+            title: 'Zweite Chance — Pessach Scheni',
+            quote: '„Und es gab Männer, die durch einen Leichnam unrein waren”',
+            quoteSource: 'Bamidbar 9:6',
+            body1: 'Der Midrasch enthüllt: diese Männer trugen den Sarg Josefs durch die Wüste — eine große Tat. Aber deshalb wurden sie unrein und verpassten Pessach. Sie fügten sich nicht — sie fragten Mosche:',
+            quote2: '„Warum sollen wir benachteiligt sein? Wir wollen G-tt opfern!”',
+            quote2Source: 'Bamidbar 9:7 — eine Frage, die die Tora für immer veränderte',
+            body2: 'Diese Frage veränderte das jüdische Gesetz für alle Generationen. G-tt antwortete: Pessach Scheni — ein zweites Pessach am 14. Ijjar.',
+            choicePrompt: 'Du hast Pessach aus einem wichtigen Grund verpasst (ohne eigene Schuld). Was tust du?',
+            choices: [
+              '😔 Ich akzeptiere es — G-tt sieht, dass ich unschuldig bin',
+              '🙋 Ich gehe zum Rabbiner — vielleicht gibt es eine zweite Chance?',
+              '📚 Ich finde selbst einen Weg — ohne Erlaubnis'
+            ],
+            feedback: [
+              { he: 'לֹא תֵלֵךְ רֵיקָם', quote: '„Gehe nicht mit leeren Händen” (Schemot 23:15)', note: 'Demut ist gut — aber gerade die Frage der Josefträger schuf das Gesetz Pessach Scheni! Demut ohne Frage ist eine verpasste Möglichkeit.' },
+              { he: 'לָמָּה נִגָּרַע', quote: '„Warum sollen wir benachteiligt sein?” (Bamidbar 9:7)', note: 'Richtig! Eine Frage veränderte die Tora für alle Generationen. Das Gesetz Pessach Scheni existiert, weil sie fragten. Es ist nie zu spät zu fragen!' },
+              { he: 'שְׁאַל אֶת הָרַב', quote: '„Frage deinen Vater, er wird es dir sagen” (Dewarim 32:7)', note: 'Initiative ist lobenswert — aber ohne Tora kann man sich irren. Besser den Rabbiner fragen, wie die Josefträger es taten.' }
+            ],
+            insight: 'Die Lektion von Pessach Scheni: Im Judentum gibt es immer einen Weg zurück. „Niemand ist für immer verloren” — der Rebbe lehrte: Selbst wer „weit” ist (בְּדֶרֶךְ רְחֹקָה), kann zurückkehren.',
+            next: 'Nächste Aufgabe →',
+            glossary: [
+              { label: 'Pessach Scheni', def: '14. Ijjar — zweites Pessach. Eingeführt für jene, die am 14. Nissan unrein oder unterwegs waren.', ref: 'Bamidbar 9:10–11' },
+              { label: 'Josefs Sarg', def: 'Die Josefträger wurden durch den Toten unrein, aber vollbrachten eine große Tat — und ihre Frage veränderte die Tora.' },
+              { label: 'Karet', def: 'Geistiges Abschneiden. Strafe für absichtliches Auslassen von Pessach ohne Grund (Bamidbar 9:13).' }
+            ]
+          },
+          c2q3: {
+            sceneTitle: 'Aufgabe 3',
+            title: 'Das Geheimnis der Zahl 70',
+            quote: '„Versammle mir 70 Männer von den Ältesten Israels”',
+            quoteSource: 'Bamidbar 11:16',
+            body1: 'Warum genau 70? Der Midrasch enthüllt drei erstaunliche Parallelen!',
+            connections: [
+              { number: '70', icon: '👴', label: 'Älteste', he: 'שִׁבְעִים זְקֵנִים', text: 'Mosche wählte 70 Älteste — entsprechend der Anzahl der Seelen, die mit Jaakow nach Ägypten hinabstiegen (Bereschit 46:27). Verbindung der Generationen!' },
+              { number: '70', icon: '🌍', label: 'Völker der Welt', he: 'שִׁבְעִים אֻמּוֹת', text: '70 Völker der Welt — Nachkommen der Söhne Noachs. 70 Älteste Israels tragen Verantwortung auch für die ganze Menschheit.' },
+              { number: '70', icon: '✡️', label: 'Namen G-ttes', he: 'שִׁבְעִים שֵׁמוֹת', text: 'Der Ewige hat 70 Namen. 70 Älteste entsprechen diesen Namen. Deshalb hat auch „Jerusalem” 70 Namen im Midrasch.' }
+            ],
+            connectPrompt: 'Drücke auf jede Karte, um die Verbindung zu enthüllen:',
+            mathQuestion: 'Eldad und Medad blieben im Lager, prophezeiten aber auch. Insgesamt: 70 Älteste + Eldad + Medad = ?',
+            mathOptions: [70, 71, 72, 73],
+            mathAnswer: 2,
+            mathFeedback: '72! Und Mosche war nicht eifersüchtig — er sagte: „Wären doch alle im Volk G-ttes Propheten!” (Bamidbar 11:29). Wahre Größe beneidet nicht.',
+            eldadInsight: 'Der Midrasch enthüllt: die Namen „Eldad und Medad” enthalten ein Akrostichon: „Mosche wird sterben, Jehoschua führt Israel ins Land”. Sie prophezeiten die Zukunft!',
+            spiritNote: 'Besonderer Moment: Eldads und Medads Geist der Prophetie kam direkt von G-tt — nicht von Mosche wie bei den anderen 70. „Und der Geist ruhte auf ihnen” (11:26) — dieselbe Formulierung wie beim Rasten der Bundeslade.',
+            next: 'Nächste Aufgabe →',
+            glossary: [
+              { label: 'Eldad und Medad', def: 'Zwei der 70 Auserwählten, die im Lager blieben. Sie prophezeiten über Mosches Tod und Jehoschua.', ref: 'Bamidbar 11:26–27' },
+              { label: '70 Völker', def: 'Laut Tora 70 Grundvölker der Welt — Nachkommen der drei Söhne Noachs (Bereschit 10).' },
+              { label: 'Geist der Prophetie', def: 'Ruach ha-Kodesch. Mosche gab den 70 seinen Geist; Eldad und Medad empfingen direkt von G-tt.' }
+            ]
+          },
+          c2q4: {
+            sceneTitle: 'Aufgabe 4',
+            title: 'Zwei silberne Trompeten',
+            quote: '„Mache dir zwei silberne Trompeten”',
+            quoteSource: 'Bamidbar 10:2 — nur Mosche persönlich, diese Trompeten gehörten ihm',
+            body1: 'Warum Silber und nicht Gold? „Um nicht an das Böse des Volkes zu erinnern” — nicht an den goldenen Kalb! Zwei Hörner = Abraham und Jaakow, die Feinde im Kampf besiegten.',
+            quote2: '„Und wenn ihr in eurem Land in den Krieg gegen den Feind zieht — blast die Trompeten”',
+            quote2Source: 'Bamidbar 10:9 — Hinweis auf den Krieg Gog und Magog in der Zukunft. „Ihr kommt” (תבאו) — Buchstaben = אבות (Väter): ihr Verdienst schützt im Krieg',
+            body2: 'Mathematisches Geheimnis: „שִׂמְחֹתֵיכֶם” (eure Freuden) enthält nach Gematria das Wort Schabbat. „וּבְמוֹעֲדֵיכֶם” (in euren Festen) — vollständig geschrieben, mit Waw = 6 Feste: Pessach, Schawuot, Rosch ha-Schana, Jom Kippur, Sukkot, Schemini Azeret.',
+            gameLead: 'Spiel: Wann bläst man die Trompeten?',
+            gameText: 'Wähle eine Karte, dann drücke auf die Zone',
+            sortData: [
+              { text: '⚔️ Krieg gegen Feinde', correct: 'yes' },
+              { text: '🎉 Festopfer', correct: 'yes' },
+              { text: '🌙 Neumond (Rosch Chodesech)', correct: 'yes' },
+              { text: '✡️ Schabbat (nach Gematria)', correct: 'yes' },
+              { text: '☕ Gewöhnlicher Werktag', correct: 'no' },
+              { text: '💼 Private Angelegenheiten', correct: 'no' }
+            ],
+            zoneYes: '🎺 Trompeten blasen',
+            zoneNo: '🚫 Keine Trompeten',
+            feedback: 'Sehr gut! „Tawou” (ihr kommt) = Buchstaben אבות (Väter) — das Verdienst von Abraham, Jizchak und Jaakow schützt im Krieg. Trompeten — die Stimme des ganzen Volkes in Freude, Not und Sieg.',
+            feedbackSource: 'Bamidbar 10:9–10 · Raschi und Baal Tosafot',
+            next: 'Nächste Aufgabe →',
+            glossary: [
+              { label: 'Chazozrot', def: 'Silberne Trompeten. Aus Silber (nicht Gold) — um nicht an den goldenen Kalb zu erinnern.', ref: 'Bamidbar 10:2' },
+              { label: 'Gog und Magog', def: 'Großer Krieg am Ende der Zeiten. „Ihr kommt in den Krieg” — Midrasch: Hinweis auf diesen künftigen Krieg.', ref: 'Jecheskiel 38–39' },
+              { label: 'Rosch Chodesch', def: 'Neumond. Halbfeiertag mit besonderen Gebeten und Mussaf-Gebet.' }
+            ]
+          },
+          c2q5: {
+            sceneTitle: 'Aufgabe 5',
+            title: 'Umgekehrte Nuns — ein kleines Buch',
+            body1: 'In der Tora gibt es zwei Verse über die Bundeslade, die von „umgekehrten Nuns” (נ הפוכה) umgeben sind. Der Talmud erklärt: dieser kleine Abschnitt gilt als eigenständiges Buch der Tora! (Schabbat 115b–116a)',
+            quote: '„Und es geschah, wenn die Lade aufbrach, sagte Mosche: Stehe auf, Ewiger, und deine Feinde sollen sich zerstreuen!”',
+            quoteSource: 'Bamidbar 10:35 — „ויהי” = Wehe den Feinden; Gematria 31 = 31 Könige, besiegt von Jehoschua',
+            quote2: '„Und wenn sie rastete, sagte er: Kehre zurück, Ewiger, zu den Myriaden Tausender Israels”',
+            quote2Source: 'Bamidbar 10:36 — „ובנחה” mit Hey geschrieben = 4 Lager + Levitenlager',
+            puzzle1Question: 'Zähle die Wörter in Vers 10:35 („ויהי בנסוע הארון...”):',
+            puzzle1Options: [9, 10, 12, 14],
+            puzzle1Answer: 2,
+            puzzle1Feedback: '12 Wörter! — wie im letzten Vers der gesamten Tora (Dewarim 34:12, „לכל היד החזקה”). Auch das Ende der Tora enthält 12 Wörter.',
+            puzzle2Question: 'Wie viele Wörter hat Vers 10:36 („ובנחה יאמר שובה ה׳...”)?',
+            puzzle2Options: [5, 6, 7, 8],
+            puzzle2Answer: 2,
+            puzzle2Feedback: '7 Wörter — wie „Bereschit bara Elohim” (Bereschit 1:1)! Anfang der Tora = 7 Wörter. Dieser Abschnitt ist ein eigenständiges Buch der Tora zwischen zwei „Strafabschnitten”.',
+            yakovFact: '„בנסע” (beim Aufbrechen der Lade) nach Gematria = יעקב (Jaakow). Das Abbild Jaakows, eingraviert in den Thron der Herrlichkeit, reiste mit der Bundeslade durch die Wüste.',
+            next: 'Nächste Aufgabe →',
+            glossary: [
+              { label: 'Umgekehrte Nun', def: 'Besonderes Zeichen in der Torarolle, das zwei Verse über die Bundeslade umgibt. Kennzeichnet ein eigenständiges Buch.', ref: 'Schabbat 115b' },
+              { label: 'Bundeslade', def: 'Aron ha-Kodesch. Wenn sie sich bewegte — trug sie die Merkawa (himmlischer Wagen) und die heiligen Wesen.' },
+              { label: 'Merkawa', def: 'Himmlischer Wagen — mystische Struktur. Die Bundeslade trug sie bei jedem Zug durch die Wüste.' }
+            ]
+          },
+          c2q6: {
+            sceneTitle: 'Aufgabe 6',
+            title: 'Der demütigste Mensch der Welt',
+            quote: '„Und der Mensch Mosche war sehr demütig, mehr als alle Menschen auf Erden”',
+            quoteSource: 'Bamidbar 12:3',
+            body1: 'Mirjam und Aaron sprachen über Zippora — Mosches Frau. G-tt hörte alles. Mosche selbst hörte es nicht. Genau darin liegt Demut: nicht reagieren, sich nicht verteidigen, G-tt vertrauen.',
+            insight1Title: 'Das Geheimnis der „Kuschiterin”',
+            insight1: '„הַכּוּשִׁית” (Kuschiterin) hat nach Gematria denselben Wert wie „יְפַת מַרְאֶה” (schön von Aussehen) = 736. Midrasch: Zippora war schön wie eine Kuschiterin unter ihrem Volk. Man nannte sie so als Zeichen besonderer Schönheit.',
+            insight2Title: 'Gematria der Demut',
+            insight2: '„עָנָו” (demütig) ist ohne den Buchstaben Alef geschrieben — אֲנָיו. Kabbala: Alef ist „im Exil”. Das Wichtigste: Gematria „ענו” = 126 = „בְּעֵדֶן” (im Eden). Demut führt wörtlich ins Paradies!',
+            insight3Title: 'Fünf Buchstaben Mosches',
+            insight3: 'Mosches Gebet für Mirjam: „רְפָא נָא לָהּ” — nur 5 Wörter, 5 Buchstaben. Das kürzeste wirksame Gebet in der Tora. Die Lehre: ein echtes Gebet braucht keine langen Worte — nur die Seele.',
+            reflectionLead: 'Frage zum Nachdenken:',
+            reflectionQuestion: 'Denke an einen Menschen, den du für seine Demut bewunderst. Was inspiriert dich an ihm? Welche Eigenschaft möchtest du in dir entwickeln?',
+            placeholder: 'Schreibe deinen Gedanken hier...',
+            submit: 'Eintragen →',
+            emptyJournal: '(Gedanke gespeichert)',
+            feedback: '„עָנָו” = „בְּעֵדֶן” = 126. Demut öffnet Eden — das Paradies in einem selbst.',
+            feedbackSource: 'Bamidbar 12:3 · Kabbala: Gematria ענו = 126 = בעדן',
+            next: 'Zum Abschluss →',
+            glossary: [
+              { label: 'Anaw (Demütig)', def: 'Nicht wer sich erniedrigt, sondern wer keine Anerkennung für sich verlangt, sie aber anderen gibt.', ref: 'Bamidbar 12:3' },
+              { label: 'Mirjam', def: 'Mosches Schwester. Prophetin. Sprach über Mosches Ehe und wurde mit Aussatz bestraft. Mosche betete für ihre Heilung.', ref: 'Bamidbar 12:1–15' },
+              { label: 'Refua', def: 'Heilung. „רפא נא לה” = „Heile sie doch”. Fünf Buchstaben — kürzestes Gebet der Tora, gesprochen aus Liebe.' }
+            ]
+          },
+          c2final: {
+            subtitle: 'Behaalotcha — Kapitel 2: Abschluss',
+            quote: '„Sieben Leuchter werden dem Gesicht der Menora leuchten”',
+            quoteSource: 'Bamidbar 8:2 — das Licht ist den Menschen zugewandt, nicht G-tt',
+            quote2: '„Die letzte Generation des Exils ist die erste Generation der Erlösung”',
+            quote2Source: 'Lubawitscher Rebbe, Behaalotcha 5751',
+            summaryTitle: 'Sechs Lektionen aus Behaalotcha 2:',
+            summary: [
+              { icon: '🕎', topic: 'Menora', lesson: '18 Handbreiten = חי = Leben. Wir sind berufen, die Welt zu erleuchten — für Menschen, nicht für G-tt.' },
+              { icon: '🔄', topic: 'Pessach Scheni', lesson: 'Eine Frage veränderte die Tora. Es ist nie zu spät zu fragen und eine zweite Chance zu bekommen.' },
+              { icon: '✡️', topic: 'Zahl 70', lesson: '70 Älteste = 70 Seelen in Ägypten = 70 Völker = 70 Namen G-ttes. Wir sind mit allem verbunden.' },
+              { icon: '🎺', topic: 'Zwei Trompeten', lesson: 'Silber, nicht Gold. „Ihr kommt” = „Väter”. Ihr Verdienst schützt uns.' },
+              { icon: '📜', topic: 'Umgekehrte Nun', lesson: '12 Wörter + 7 Wörter = Anfang und Ende der Tora. Ein kleiner Abschnitt — ein eigenes Buch.' },
+              { icon: '🤲', topic: 'Demut', lesson: 'ענו = בעדן = 126. Demut ist der Weg ins Paradies. „רפא נא לה” — fünf Buchstaben, ein großes Gebet.' }
+            ],
+            prompt: 'Welche Lektion aus Behaalotcha 2 nimmst du mit?',
+            choices: [
+              '💡 Ich werde die Welt erleuchten — ich finde diese Woche einen Weg, einem anderen zu helfen',
+              '🔄 Ich nutze eine zweite Chance — ich tue, was ich lange aufgeschoben habe',
+              '🤲 Ich übe Demut — einen Tag lang höre ich mehr, als ich spreche'
+            ],
+            feedback: [
+              '„Es ist ein großes Gebot, immer in Freude zu sein” — die Welt erleuchten bedeutet, einem anderen Freude zu bringen. Die Menora leuchtet den Menschen zu — nicht G-tt.',
+              '„Pessach Scheni” — eine zweite Chance gibt es! Tu es heute. Warte nicht auf den nächsten Nissan. Eine Frage verändert alles.',
+              '„ענו” = „בעדן”. Ein Tag der Demut öffnet mehr Türen als ein Jahr des Streits. Mosche betete für Mirjam — mit fünf Wörtern.'
+            ],
+            feedbackSource: 'Behaalotcha, Bamidbar · Nach der Sicha des Lubawitscher Rebbe זי”ע',
+            backHome: '← Zur Startseite',
+            backChapter1: '← Kapitel 1: Manna vom Himmel',
+            glossary: [
+              { label: 'Menora', def: 'Siebenarmiger Leuchter. Symbol Israels als „Licht für die Völker”. Das Licht ist den Menschen zugewandt.' },
+              { label: 'Pessach Scheni', def: '14. Ijjar — zweite Chance. Die Lektion: niemand ist für immer verloren.' },
+              { label: 'Anawa (Demut)', def: 'ענו = בעדן = 126. Demut — der höchste geistige Weg. „Der Demütigste aller Menschen”.' }
             ]
           }
         },
@@ -695,7 +1194,15 @@
           'Fünfter Tag. Schabbat und Manna. Verteile die Portionen über die Wochentage und entdecke, wie Schabbat alles segnet.',
           'Sechster Tag. Teschuwa durch das Manna. Denke darüber nach, was in deinem Leben Geduld und schrittweise Arbeit braucht.',
           'Heiliger Schabbat. Du bist einen ganzen Wochenweg gegangen. Dein Ergebnis ist keine Note, sondern ein Weg.',
-          'Die letzte Generation des Exils ist die erste Generation der Erlösung. Wähle eine Handlung, die du heute tun kannst.'
+          'Die letzte Generation des Exils ist die erste Generation der Erlösung. Wähle eine Handlung, die du heute tun kannst.',
+          'Behaalotcha, Kapitel zwei. Menora, Wolke und Trompeten. Sechs Aufgaben: Mathematik, Wahl, Zahlen, Sortieren, Wörter zählen und Nachdenken. Drücke Beginnen, um weiterzumachen.',
+          'Aufgabe eins. Mathematik der Menora. Die Menora ist achtzehn Handbreiten hoch — achtzehn ist Chai, Leben. Drücke auf die Zahlen, um ihre Geheimnisse zu enthüllen.',
+          'Aufgabe zwei. Zweite Chance. Die Männer, die Josefs Sarg trugen, verpassten Pessach. Sie fügten sich nicht — sie fragten. Eine Frage veränderte die Tora für immer.',
+          'Aufgabe drei. Das Geheimnis der Zahl siebzig. Siebzig Älteste, siebzig Seelen in Ägypten, siebzig Völker, siebzig Namen G-ttes. Finde die Verbindungen.',
+          'Aufgabe vier. Zwei silberne Trompeten. Silber, nicht Gold — um nicht an den goldenen Kalb zu erinnern. Sortiere die Karten in die richtigen Zonen.',
+          'Aufgabe fünf. Umgekehrte Nuns. Zwei Verse über die Bundeslade bilden ein eigenständiges Buch der Tora. Zähle die Wörter und entdecke das Geheimnis.',
+          'Aufgabe sechs. Der demütigste Mensch der Welt. Anaw nach Gematria gleich BeEden — im Paradies. Demut ist der Weg zum Höchsten. Schreibe deinen Gedanken.',
+          'Abschluss. Sieben Leuchter der Menora leuchten den Menschen zu. Die letzte Generation des Exils ist die erste Generation der Erlösung. Wähle die Lektion, die du mitnimmst.'
         ]
       }
     }
