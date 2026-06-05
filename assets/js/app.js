@@ -1325,6 +1325,9 @@ window.c2FinalChoice = c2FinalChoice;
 (function () {
   const bubble = document.getElementById('tooltipBubble');
   let hideTimer;
+  function closestTerm(target) {
+    return target instanceof Element ? target.closest('.term[data-tip],.term[data-tip-heb]') : null;
+  }
   function positionAndShow(term) {
     clearTimeout(hideTimer);
     const tip = term.dataset.tip || '';
@@ -1361,14 +1364,14 @@ window.c2FinalChoice = c2FinalChoice;
     hideTimer = setTimeout(() => bubble.classList.remove('visible'), 90);
   }
   document.addEventListener('mouseover', e => {
-    const t = e.target.closest('.term[data-tip],.term[data-tip-heb]');
+    const t = closestTerm(e.target);
     if (t) positionAndShow(t);
   });
   document.addEventListener('mouseout', e => {
-    if (e.target.closest('.term')) hideBubble();
+    if (e.target instanceof Element && e.target.closest('.term')) hideBubble();
   });
   document.addEventListener('touchend', e => {
-    const t = e.target.closest('.term[data-tip],.term[data-tip-heb]');
+    const t = closestTerm(e.target);
     if (t) {
       e.preventDefault();
       bubble.classList.contains('visible') ? bubble.classList.remove('visible') : positionAndShow(t);
