@@ -243,6 +243,9 @@
     font-family: 'Cormorant Garamond', serif;
     font-size: 0.95rem;
     transition: all 0.2s ease;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .menu-language-btn:hover,
   .btn-inline:hover,
@@ -608,6 +611,9 @@
     transition: all 0.25s ease;
     position: relative;
     overflow: hidden;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .choice-btn::before {
     content: '';
@@ -646,6 +652,9 @@
     display: block;
     margin: 24px auto 0;
     text-transform: uppercase;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .btn-primary:hover {
     background: var(--gold);
@@ -666,6 +675,9 @@
     display: block;
     margin: 12px auto 0;
     direction: ltr;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .btn-secondary:hover {
     background: rgba(139,98,20,0.08);
@@ -793,6 +805,10 @@
     border-radius: 4px;
     padding: 14px;
     transition: all 0.25s;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .sort-zone.highlight { border-color: var(--gold); background: rgba(201,146,42,0.06); }
   .sort-zone h4 {
@@ -870,6 +886,7 @@
     position: relative;
     cursor: pointer;
     margin: 8px 0;
+    touch-action: manipulation;
   }
   .scale-thumb {
     width: 20px; height: 20px;
@@ -944,6 +961,7 @@
     border: none;
     border-bottom: 1px solid transparent;
     padding: 10px 16px;
+    touch-action: manipulation;
     font-family: 'Noto Serif Hebrew', serif;
     font-size: 0.9rem;
     cursor: pointer;
@@ -1219,6 +1237,9 @@
     cursor: pointer;
     transition: all 0.25s ease;
     direction: ltr;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .chapter-card:hover {
     border-color: var(--gold);
