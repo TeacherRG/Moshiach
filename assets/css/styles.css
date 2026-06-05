@@ -824,6 +824,8 @@
     cursor: pointer;
     transition: all 0.2s;
     user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
   }
   .sort-card:hover { border-color: var(--gold); background: var(--parchment-dark); transform: translateY(-2px); }
   .sort-card.placed { opacity: 0.4; cursor: default; pointer-events: none; }
@@ -1292,6 +1294,13 @@
     cursor: pointer;
     transition: background 0.2s, transform 0.15s, border-color 0.2s;
     user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    appearance: none;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
   }
   .c2-reveal-box:hover { background: rgba(201,146,42,0.14); transform: translateY(-2px); }
   .c2-reveal-box.opened {

@@ -879,15 +879,15 @@ function renderC2Q1(el) {
     <div class="day-title">${s.title}</div>
     ${quoteBlock(hs.quoteHe, s.quote, s.quoteSource)}
     <div class="body-text">${s.body1}</div>
-    ${quoteBlock(hs.quote2He, s.quote2, '8:4')}
+    ${quoteBlock(hs.quote2He, s.quote2 || hs.quote2He, '8:4')}
     <div class="body-text"><strong>${s.revealPrompt}</strong></div>
     <div class="c2-reveal-row" id="c2q1reveals">
       ${s.reveals.map((r, i) => `
-        <div class="c2-reveal-box" id="reveal${i}" onclick="c2q1Reveal(${i})">
+        <button type="button" class="c2-reveal-box" id="reveal${i}" onclick="c2q1Reveal(${i})">
           <div class="c2-reveal-number">${r.number}</div>
           <div class="c2-reveal-he">${r.he}</div>
           <div class="c2-reveal-hint">нажми ▼</div>
-        </div>`).join('')}
+        </button>`).join('')}
     </div>
     <div id="c2q1revealText" class="hidden" style="margin:12px 0;"></div>
     ${divider()}
@@ -1002,12 +1002,12 @@ function renderC2Q3(el) {
     <div class="body-text"><strong>${s.connectPrompt}</strong></div>
     <div class="c2-reveal-row" id="c2q3cards">
       ${s.connections.map((c, i) => `
-        <div class="c2-reveal-box" id="conn${i}" onclick="c2q3Reveal(${i})">
+        <button type="button" class="c2-reveal-box" id="conn${i}" onclick="c2q3Reveal(${i})">
           <div class="c2-reveal-number">${c.number}</div>
           <div style="font-size:1.5rem;">${c.icon}</div>
           <div class="c2-reveal-he">${c.he}</div>
           <div class="c2-reveal-hint">${c.label} ▼</div>
-        </div>`).join('')}
+        </button>`).join('')}
     </div>
     <div id="c2q3math" class="hidden">
       ${divider()}
