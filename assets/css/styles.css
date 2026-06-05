@@ -20,6 +20,10 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html {
+    touch-action: manipulation;
+  }
+
   body {
     font-family: 'Cormorant Garamond', serif;
     background: var(--night);
@@ -793,6 +797,8 @@
     border-radius: 4px;
     padding: 14px;
     transition: all 0.25s;
+    cursor: pointer;
+    touch-action: manipulation;
   }
   .sort-zone.highlight { border-color: var(--gold); background: rgba(201,146,42,0.06); }
   .sort-zone h4 {
