@@ -1,8 +1,10 @@
 const CONTENT = window.MoshiachContent;
 
 function detectLang() {
-  const saved = localStorage.getItem('moshiach-lang');
-  if (saved && CONTENT.translations[saved]) return saved;
+  try {
+    const saved = localStorage.getItem('moshiach-lang');
+    if (saved && CONTENT.translations[saved]) return saved;
+  } catch (e) { /* private mode or cookies blocked */ }
   const langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'ru'];
   for (const l of langs) {
     const code = l.split('-')[0].toLowerCase();
@@ -71,7 +73,7 @@ function interpolate(text, vars) {
 function setLanguage(lang) {
   if (!CONTENT.translations[lang]) return;
   state.lang = lang;
-  localStorage.setItem('moshiach-lang', lang);
+  try { localStorage.setItem('moshiach-lang', lang); } catch (e) { /* ignore */ }
   document.documentElement.lang = tr().meta.htmlLang;
   document.title = tr().meta.title;
   renderMenu();
